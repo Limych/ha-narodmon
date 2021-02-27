@@ -1,0 +1,11 @@
+{
+    "codeowners": [
+        "@Limych"
+    ],
+    "dependencies": [],
+    "after_dependencies": [],
+    "documentation": "https://github.com/Limych/ha-narodmon",
+    "domain": "narodmon",
+    "name": "NarodMon",
+    "requirements": []
+}

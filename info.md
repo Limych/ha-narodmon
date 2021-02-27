@@ -7,7 +7,7 @@
 
 [![Community Forum][forum-shield]][forum]
 
-_Component to integrate with [integration_blueprint][component]._
+_Component to integrate with narodmon.ru cloud._
 
 **This component will set up the following platforms.**
 
@@ -17,7 +17,7 @@ Platform | Description
 `sensor` | Show info from API.
 `switch` | Switch something `True` or `False`.
 
-![example][exampleimg]
+![NarodMon.ru Logo](narodmon-logo.png)
 
 ## Features:
 
@@ -57,21 +57,21 @@ I put a lot of work into making this repo and component available and updated to
 
 ***
 
-[component]: https://github.com/Limych/ha-blueprint
-[commits-shield]: https://img.shields.io/github/commit-activity/y/custom-components/integration_blueprint.svg?style=popout
-[commits]: https://github.com/Limych/ha-blueprint/commits/master
+[component]: https://github.com/Limych/ha-narodmon
+[commits-shield]: https://img.shields.io/github/commit-activity/y/Limych/ha-narodmon.svg?style=popout
+[commits]: https://github.com/Limych/ha-narodmon/commits/master
 [hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=popout
 [hacs]: https://hacs.xyz
 [exampleimg]: example.png
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=popout
 [forum]: https://community.home-assistant.io/
-[license]: https://github.com/Limych/ha-blueprint/blob/main/LICENSE.md
+[license]: https://github.com/Limych/ha-narodmon/blob/main/LICENSE.md
 [license-shield]: https://img.shields.io/badge/license-Creative_Commons_BY--NC--SA_License-lightgray.svg?style=popout
 [maintenance-shield]: https://img.shields.io/badge/maintainer-Andrey%20Khrolenok%20%40Limych-blue.svg?style=popout
-[releases-shield]: https://img.shields.io/github/release/custom-components/integration_blueprint.svg?style=popout
-[releases]: https://github.com/Limych/ha-blueprint/releases
-[releases-latest]: https://github.com/Limych/ha-blueprint/releases/latest
+[releases-shield]: https://img.shields.io/github/release/Limych/ha-narodmon.svg?style=popout
+[releases]: https://github.com/Limych/ha-narodmon/releases
+[releases-latest]: https://github.com/Limych/ha-narodmon/releases/latest
 [user_profile]: https://github.com/Limych
-[report_bug]: https://github.com/Limych/ha-blueprint/issues/new?template=bug_report.md
-[suggest_idea]: https://github.com/Limych/ha-blueprint/issues/new?template=feature_request.md
-[contributors]: https://github.com/Limych/ha-blueprint/graphs/contributors
+[report_bug]: https://github.com/Limych/ha-narodmon/issues/new?template=bug_report.md
+[suggest_idea]: https://github.com/Limych/ha-narodmon/issues/new?template=feature_request.md
+[contributors]: https://github.com/Limych/ha-narodmon/graphs/contributors

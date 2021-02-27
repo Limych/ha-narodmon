@@ -6,7 +6,7 @@ DOMAIN = "integration_blueprint"
 DOMAIN_DATA = f"{DOMAIN}_data"
 VERSION = "0.0.0+dev"
 ATTRIBUTION = "Data provided by http://jsonplaceholder.typicode.com/"
-ISSUE_URL = "https://github.com/Limych/ha-blueprint/issues"
+ISSUE_URL = "https://github.com/Limych/ha-narodmon/issues"
 
 # Icons
 ICON = "mdi:format-quote-close"

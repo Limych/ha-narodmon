@@ -1,1 +1,1 @@
-"""Tests for integration."""
+"""Tests for NarodMon.ru integration."""

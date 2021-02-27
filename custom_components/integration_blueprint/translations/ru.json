@@ -3,7 +3,7 @@
         "step": {
             "user": {
                 "title": "Blueprint",
-                "description": "Если вам нужна помощь с настройкой, посмотрите здесь: https://github.com/Limych/ha-blueprint",
+                "description": "Если вам нужна помощь с настройкой, посмотрите здесь: https://github.com/Limych/ha-narodmon",
                 "data": {
                     "username": "Имя пользователя",
                     "password": "Пароль"
