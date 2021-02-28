@@ -1,11 +1,13 @@
 {
+    "domain": "narodmon",
+    "name": "Narodmon.ru Cloud Integration",
+    "version": "0.0.0+dev",
+    "documentation": "https://github.com/Limych/ha-narodmon",
+    "issue_tracker": "https://github.com/Limych/ha-narodmon/issues",
+    "dependencies": [],
+    "config_flow": true,
     "codeowners": [
         "@Limych"
     ],
-    "dependencies": [],
-    "after_dependencies": [],
-    "documentation": "https://github.com/Limych/ha-narodmon",
-    "domain": "narodmon",
-    "name": "NarodMon",
     "requirements": []
 }

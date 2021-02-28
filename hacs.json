@@ -1,5 +1,5 @@
 {
-    "name": "Integration blueprint",
+    "name": "Narodmon.ru Cloud Integration",
     "hacs": "1.6.0",
     "iot_class": "Cloud Polling",
     "homeassistant": "0.118.0"

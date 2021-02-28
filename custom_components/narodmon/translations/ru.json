@@ -1,0 +1,19 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Интеграция облака Narodmon.ru",
+                "description": "Если вам нужна помощь с настройкой, посмотрите здесь: https://github.com/Limych/ha-narodmon",
+                "data": {
+                    "apikey": "Ключ API"
+                }
+            }
+        },
+        "error": {
+            "auth": "Неверный ключ API."
+        },
+        "abort": {
+            "single_instance_allowed": "Допускается только один экземпляр."
+        }
+    }
+}

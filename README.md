@@ -129,7 +129,7 @@ To enable debug logs use this configuration:
 logger:
   default: info
   logs:
-    custom_components.narodmon: debug
+    .: debug
 ```
 ... then restart HA.
 
