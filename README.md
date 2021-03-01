@@ -11,19 +11,17 @@
 
 [![Community Forum][forum-shield]][forum]
 
-_Component to integrate with narodmon.ru cloud._
-
-**This component will set up the following platforms.**
-
-Platform | Description
--- | --
-`binary_sensor` | Show something `True` or `False`.
-`sensor` | Show info from blueprint API.
-`switch` | Switch something `True` or `False`.
+_Component to integrate with Narodmon.ru cloud and automatic search for the nearest sensors of the required type._
 
 ![NarodMon.ru Logo](narodmon-logo.png)
 
-### Install from HACS (recommended)
+## Known Limitations and Issues
+
+- At the moment, configuring the component is only possible through `configuration.yaml`. Support for configuration via config flow will be added in the future.
+
+## Installation
+
+### Install via HACS (recommended)
 
 1. Have [HACS][hacs] installed, this will allow you to easily manage and track updates.
 1. Search for "Narodmon".
@@ -41,7 +39,7 @@ Platform | Description
 1. Download file `narodmon.zip` from the [latest release section][releases-latest] in this repository.
 1. Extract _all_ files from this archive you downloaded in the directory (folder) you created.
 6. Restart Home Assistant
-7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Blueprint"
+7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Narodmon"
 
 <p align="center">* * *</p>
 I put a lot of work into making this repo and component available and updated to inspire and help others! I will be glad to receive thanks from you — it will give me new strength and add enthusiasm:
@@ -56,13 +54,14 @@ I put a lot of work into making this repo and component available and updated to
 
 ```yaml
 # Example configuration.yaml entry
-sensor:
-  - platform: narodmon
-    name: 'Average Temperature'
-    entities:
-      - weather.gismeteo
-      - sensor.owm_temperature
-      - sensor.dark_sky_temperature
+narodmon:
+  apikey: YOUR_NARODMON_API
+  devices:
+    - name: "Narodmon"
+      sensors:
+        - temperature
+        - humidity
+        - pressure
 ```
 
 <p align="center">* * *</p>
@@ -76,46 +75,52 @@ I put a lot of work into making this repo and component available and updated to
 
 ### Configuration Variables
 
-**entities**:\
-  _(list) (Required)_\
-  A list of temperature sensor entity IDs.
+**apikey**:\
+  _(string) (**Required**)_\
+  The API key is a unique identifier that authenticates requests associated with your project.
 
 > **_Note_**:\
-> You can use weather provider, climate and water heater entities as a data source. For that entities sensor use values of current temperature.
+> To obtain a key, you need to register on [narodmon.ru](https://narodmon.ru/), then open the menu item `Profile`-> `My applications`-> `New key` and create an API key. You can give any name to the key at your discretion.
 
-> **_Note_**:\
-> You can use groups of entities as a data source. These groups will be automatically expanded to individual entities.
+**devices**:\
+  _(list) (**Required**)_\
+  List of virtual devices with uniform settings.
+
+**verify_ssl**:\
+  _(boolean) (Optional) (Default value: True)_\
+  Verify SSL/TLS certificate for HTTPS request.
+
+**timeout**:\
+  _(boolean) (Optional) (Default value: 10)_\
+  Timeout for the connection in seconds.
+
+#### Device configuration variables
+
+Each virtual device in a list have the following settings:
 
 **name**:\
-  _(string) (Optional)_\
-  Name to use in the frontend.\
-  _Default value: "Average"_
+  _(template) (**Required**)_\
+  Name of the device.
 
-**start**:\
-  _(template) (Optional)_\
-  When to start the measure (timestamp or datetime).
+**latitude**:\
+  _(float) (Optional) (Default value: Your home zone latitude defined in your configuration)_\
+  Latitude of the center point of the sensor search area. The sensor closest to this point is always selected.
 
-**end**:\
-  _(template) (Optional)_\
-  When to stop the measure (timestamp or datetime).
+**longitude**:\
+  _(float) (Optional) (Default value: Your home zone longitude defined in your configuration)_\
+  Longitude of the center point of the sensor search area. The sensor closest to this point is always selected.
 
-**duration**:\
-  _(time) (Optional)_\
-  Duration of the measure.
-
-**precision**:\
-  _(number) (Optional)_\
-  The number of decimals to use when rounding the sensor state.\
-  _Default value: 2_
-
-**process_undef_as**:\
-  _(number) (Optional)_\
-  Process undefined values (unavailable, sensor undefined, etc.) as specified value.\
-  \
-  By default, undefined values are not included in the average calculation. Specifying this parameter allows you to calculate the average value taking into account the time intervals of the undefined sensor values.
+**scan_interval**:\
+  _(number) (Optional) (Default value: 3 minutes)_\
+  Minimum time interval between updates. Supported formats: `scan_interval: 'HH:MM:SS'`, `scan_interval: 'HH:MM'` and Time period dictionary.
 
 > **_Note_**:\
-> This parameter does not affect the calculation of the count, min and max attributes.
+> Updates more than once a minute are prohibited by Narodmon.ru and can lead to permanent blocking of your project.
+
+**sensors**:\
+  _(list) (Optional) (Default value: all listed here sensor types)_\
+  Types of sensors to be created. Available types:
+  `temperature`, `humidity`, `pressure`, `wind_speed`, `wind_bearing`, `precipitation`, `illuminance`, `radiation`, `uv`, `pm`
 
 ## Track updates
 
@@ -129,7 +134,7 @@ To enable debug logs use this configuration:
 logger:
   default: info
   logs:
-    .: debug
+    custom_component.narodmon: debug
 ```
 ... then restart HA.
 

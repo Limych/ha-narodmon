@@ -7,33 +7,25 @@
 
 [![Community Forum][forum-shield]][forum]
 
-_Component to integrate with narodmon.ru cloud._
-
-**This component will set up the following platforms.**
-
-Platform | Description
--- | --
-`binary_sensor` | Show something `True` or `False`.
-`sensor` | Show info from API.
-`switch` | Switch something `True` or `False`.
+_Component to integrate with Narodmon.ru cloud and automatic search for the nearest sensors of the required type._
 
 ![NarodMon.ru Logo](narodmon-logo.png)
 
+## Known Limitations and Issues
+
+- At the moment, configuring the component is only possible through `configuration.yaml`. Support for configuration via config flow will be added in the future.
+
 ## Features:
 
-- Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
-- Phasellus blandit massa non tellus:
-    - Pellentesque blandit. Etiam sapien.
-    - Quisque sed massa ac tortor accumsan bibendum.
-    - Donec et orci quis mi sollicitudin consectetuer.
-- Donec malesuada. Pellentesque bibendum pellentesque elit.
-- Morbi et diam ac wisi auctor fringilla.
+- Automatically selects the closest sensor of the required type.
+- If the sensor becomes unavailable, it automatically switches to the new nearest sensor.
+- Allows you to easily configure sensor groups for different locations.
 
 {% if not installed %}
 ## Installation
 
 1. Click install.
-1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Blueprint".
+1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Narodmon".
 
 {% endif %}
 ## Configuration is done in the UI
