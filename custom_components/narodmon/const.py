@@ -22,6 +22,7 @@ from homeassistant.const import (
     DEVICE_CLASS_HUMIDITY,
     DEVICE_CLASS_ILLUMINANCE,
     DEVICE_CLASS_PRESSURE,
+    DEVICE_CLASS_TEMPERATURE,
     LIGHT_LUX,
     TEMP_CELSIUS,
 )
@@ -64,7 +65,7 @@ SENSOR_TYPES = {
         ATTR_ID: 1,
         ATTR_NAME: "Temperature",
         ATTR_UNIT_OF_MEASUREMENT: TEMP_CELSIUS,
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_HUMIDITY,
+        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
         ATTR_ICON: None,
     },
     "humidity": {

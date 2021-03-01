@@ -59,10 +59,10 @@ def cv_apikey(value: Any) -> str:
 
 DEVICE_SCHEMA = vol.Schema(
     {
+        vol.Required(CONF_NAME): cv.string,
         vol.Optional(CONF_SENSORS): vol.All(cv.ensure_list, [vol.In(SENSOR_TYPES)]),
         vol.Optional(CONF_LATITUDE): cv.latitude,
         vol.Optional(CONF_LONGITUDE): cv.longitude,
-        vol.Optional(CONF_NAME): cv.string,
         vol.Optional(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL): vol.All(
             cv.time_period, lambda value: timedelta(seconds=value.total_seconds())
         ),

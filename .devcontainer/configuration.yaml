@@ -11,4 +11,5 @@ logger:
 narodmon:
   apikey: "51KUfP4TRQsU9"
   devices:
-    - {}
+    - name: "Narodmon"
+
