@@ -17,7 +17,7 @@ _Component to integrate with Narodmon.ru cloud and automatic search for the near
 
 ## Known Limitations and Issues
 
-- At the moment, configuring the component is only possible through `configuration.yaml`. Support for configuration via config flow will be added in the future.
+- At the moment, configuring the component is only possible through `configuration.yaml`. Support for configuration via Home Assistant UI will be added in the future.
 
 ## Installation
 
