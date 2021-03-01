@@ -1,5 +1,5 @@
 """Constants for tests."""
-from homeassistant.const import CONF_DEVICES, CONF_SENSORS
+from homeassistant.const import CONF_DEVICES, CONF_NAME, CONF_SENSORS
 
 from custom_components.narodmon.const import CONF_APIKEY, DOMAIN
 
@@ -9,6 +9,7 @@ MOCK_YAML_CONFIG = {
         CONF_APIKEY: "654FJG34816345qdlkjmlkJHGBnbh",
         CONF_DEVICES: [
             {
+                CONF_NAME: "Test",
                 CONF_SENSORS: [
                     "humidity",
                     "pressure",
