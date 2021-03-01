@@ -1,7 +1,7 @@
 {
     "domain": "narodmon",
     "name": "Narodmon.ru Cloud Integration",
-    "version": "0.0.0+dev",
+    "version": "0.1.0b1",
     "documentation": "https://github.com/Limych/ha-narodmon",
     "issue_tracker": "https://github.com/Limych/ha-narodmon/issues",
     "dependencies": [],
