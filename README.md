@@ -168,9 +168,8 @@ See separate [license file](LICENSE.md) for full text.
 [commits]: https://github.com/Limych/ha-narodmon/commits/master
 [hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=popout
 [hacs]: https://hacs.xyz
-[exampleimg]: example.png
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=popout
-[forum]: https://community.home-assistant.io/
+[forum]: https://community.home-assistant.io/t/narodmon-ru-cloud-integration/285737
 [license]: https://github.com/Limych/ha-narodmon/blob/main/LICENSE.md
 [license-shield]: https://img.shields.io/badge/license-Creative_Commons_BY--NC--SA_License-lightgray.svg?style=popout
 [maintenance-shield]: https://img.shields.io/badge/maintainer-Andrey%20Khrolenok%20%40Limych-blue.svg?style=popout
