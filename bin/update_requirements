@@ -2,19 +2,22 @@
 """Helper script to update requirements."""
 import json
 import os
+import sys
 
 import requests
 
 ROOT = os.path.dirname(os.path.abspath(f"{__file__}/.."))
 
 PKG_PATH = PACKAGE = None
-for current_path, dirs, _ in os.walk(f"{ROOT}/custom_components"):
-    if current_path.find("__pycache__") != -1:
-        continue
-    for dname in dirs:
-        if dname != "__pycache__":
-            PACKAGE = dname
-PKG_PATH = f"{ROOT}/custom_components/{PACKAGE}"
+for fname in os.listdir(f"{ROOT}/custom_components"):
+    if fname != "__pycache__" and os.path.isdir(f"{ROOT}/custom_components/{fname}"):
+        PACKAGE = fname
+        PKG_PATH = f"{ROOT}/custom_components/{PACKAGE}"
+        break
+
+if not PACKAGE:
+    print("Package not found.")
+    sys.exit(1)
 
 
 def get_package(requre: str) -> str:
@@ -54,6 +57,6 @@ for req in manifest["requirements"]:
     pkg = get_package(req)
     if pkg in harequire:
         print(f"{pkg} in HA requirements, no need here.")
-print(json.dumps(manifest["requirements"], indent=4, sort_keys=True))
+print(json.dumps(manifest["requirements"], indent=4))
 with open(f"{PKG_PATH}/manifest.json", "w") as manifestfile:
-    manifestfile.write(json.dumps(manifest, indent=4, sort_keys=True))
+    manifestfile.write(json.dumps(manifest, indent=4))
