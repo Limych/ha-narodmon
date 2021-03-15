@@ -157,7 +157,7 @@ See separate [license file](LICENSE.md) for full text.
 [component]: https://github.com/Limych/ha-narodmon
 [commits-shield]: https://img.shields.io/github/commit-activity/y/Limych/ha-narodmon.svg?style=popout
 [commits]: https://github.com/Limych/ha-narodmon/commits/master
-[hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=popout
+[hacs-shield]: https://img.shields.io/badge/HACS-Default-orange.svg?style=popout
 [hacs]: https://hacs.xyz
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=popout
 [forum]: https://community.home-assistant.io/t/narodmon-ru-cloud-integration/285737
