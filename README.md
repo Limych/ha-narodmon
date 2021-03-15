@@ -26,12 +26,12 @@ _Component to integrate with Narodmon.ru cloud and automatic search for the near
 1. Have [HACS][hacs] installed, this will allow you to easily manage and track updates.
 1. Search for "Narodmon".
 1. Click Install below the found integration.
-1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Narodmon".
+1. _If you want to configure component via Home Assistant UI..._\
+    in the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Narodmon".
+1. _If you want to configure component via `configuration.yaml`..._\
+    follow instructions below, then restart Home Assistant.
 
 ### Manual installation
-
-1. Configure integration via Home Assistant GUI or via your `configuration.yaml` file using the configuration instructions below.
-1. Restart Home Assistant
 
 1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
 2. If you do not have a `custom_components` directory (folder) there, you need to create it.
@@ -39,7 +39,10 @@ _Component to integrate with Narodmon.ru cloud and automatic search for the near
 1. Download file `narodmon.zip` from the [latest release section][releases-latest] in this repository.
 1. Extract _all_ files from this archive you downloaded in the directory (folder) you created.
 6. Restart Home Assistant
-7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Narodmon"
+1. _If you want to configure component via Home Assistant UI..._\
+    in the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Narodmon".
+1. _If you want to configure component via `configuration.yaml`..._\
+    follow instructions below, then restart Home Assistant.
 
 ### Configuration Examples
 
@@ -75,14 +78,14 @@ I put a lot of work into making this repo and component available and updated to
 
 **devices**:\
   _(list) (**Required**)_\
-  List of virtual devices with uniform settings.
+  List of virtual devices with uniform settings. See details below.
 
 **verify_ssl**:\
   _(boolean) (Optional) (Default value: True)_\
   Verify SSL/TLS certificate for HTTPS request.
 
 **timeout**:\
-  _(boolean) (Optional) (Default value: 10)_\
+  _(number) (Optional) (Default value: 10)_\
   Timeout for the connection in seconds.
 
 #### Device configuration variables
