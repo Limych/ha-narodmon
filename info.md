@@ -55,7 +55,7 @@ I put a lot of work into making this repo and component available and updated to
 
 [component]: https://github.com/Limych/ha-narodmon
 [commits-shield]: https://img.shields.io/github/commit-activity/y/Limych/ha-narodmon.svg?style=popout
-[commits]: https://github.com/Limych/ha-narodmon/commits/master
+[commits]: https://github.com/Limych/ha-narodmon/commits/dev
 [hacs-shield]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=popout
 [hacs]: https://hacs.xyz
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=popout
