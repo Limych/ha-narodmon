@@ -1,13 +1,14 @@
 {
-    "domain": "narodmon",
-    "name": "Narodmon.ru Cloud Integration",
-    "version": "1.1.0",
-    "documentation": "https://github.com/Limych/ha-narodmon",
-    "issue_tracker": "https://github.com/Limych/ha-narodmon/issues",
-    "dependencies": [],
-    "config_flow": true,
-    "codeowners": [
-        "@Limych"
-    ],
-    "requirements": []
+  "domain": "narodmon",
+  "name": "Narodmon.ru Cloud Integration",
+  "version": "1.1.1-alpha",
+  "documentation": "https://github.com/Limych/ha-narodmon",
+  "issue_tracker": "https://github.com/Limych/ha-narodmon/issues",
+  "dependencies": [],
+  "config_flow": true,
+  "codeowners": [
+    "@Limych"
+  ],
+  "requirements": [],
+  "iot_class": "cloud_polling"
 }
