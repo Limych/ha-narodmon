@@ -11,6 +11,7 @@ https://github.com/Limych/ha-narodmon/
 """
 import logging
 
+from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     ATTR_ATTRIBUTION,
@@ -76,78 +77,25 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_d
 
 
 # pylint: disable=r0902
-class NarodmonSensor(CoordinatorEntity):
+class NarodmonSensor(CoordinatorEntity, SensorEntity):
     """Implementation of an NarodMon.ru sensor."""
 
     def __init__(self, coordinator, sensor_type, device_id, name):
         """Class initialization."""
         super().__init__(coordinator)
         self._sensor_type = sensor_type
-        self._device_id = device_id
-        self._name = name
-        self._state = None
-        self._unit = None
-        self._attr = {}
+        self._device_attr = {}
 
-    @property
-    def unique_id(self):
-        """Return a unique ID to use for this entity."""
-        return f"{self._device_id}-{self._sensor_type}"
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return self._name
-
-    @property
-    def icon(self):
-        """Return the icon to use in the frontend."""
-        return SENSOR_TYPES[self._sensor_type].get(ATTR_ICON)
-
-    def _update_state(self):
-        """Update entity state."""
-        for device in sorted(
-            self.coordinator.data["devices"], key=lambda x: x["distance"]
-        ):
-            for sensor in device["sensors"]:
-                if sensor["type"] == SENSOR_TYPES[self._sensor_type][ATTR_ID]:
-                    self._state = sensor["value"]
-                    self._unit = sensor["unit"]
-                    self._attr[ATTR_SENSOR_NAME] = sensor["name"]
-
-                    self._attr[ATTR_DEVICE_ID] = "D" + str(device["id"])
-                    self._attr[ATTR_DEVICE_NAME] = device["name"]
-                    self._attr[ATTR_DISTANCE] = device["distance"]
-                    self._attr[ATTR_LOCATION] = device["location"]
-                    self._attr[ATTR_LATITUDE] = device["lat"]
-                    self._attr[ATTR_LONGITUDE] = device["lon"]
-                    return
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        self._update_state()
-        return self._state
-
-    @property
-    def unit_of_measurement(self):
-        """Return the unit of measurement of this entity."""
-        if ATTR_UNIT_OF_MEASUREMENT in SENSOR_TYPES[self._sensor_type]:
-            return SENSOR_TYPES[self._sensor_type].get(ATTR_UNIT_OF_MEASUREMENT)
-
-        self._update_state()
-        return self._unit
-
-    @property
-    def device_class(self):
-        """Return the class of this sensor."""
-        return SENSOR_TYPES[self._sensor_type].get(ATTR_DEVICE_CLASS)
-
-    @property
-    def device_info(self):
-        """Return the device info."""
-        return {
-            "identifiers": {(DOMAIN, self._device_id)},
+        self._attr_unique_id = f"{device_id}-{sensor_type}"
+        self._attr_name = name
+        self._attr_icon = SENSOR_TYPES[sensor_type].get(ATTR_ICON)
+        self._attr_native_value = None
+        self._attr_native_unit_of_measurement = SENSOR_TYPES[sensor_type].get(
+            ATTR_UNIT_OF_MEASUREMENT
+        )
+        self._attr_device_class = SENSOR_TYPES[sensor_type].get(ATTR_DEVICE_CLASS)
+        self._attr_device_info = {
+            "identifiers": {(DOMAIN, device_id)},
             "name": NAME,
             "model": VERSION,
         }
@@ -155,7 +103,27 @@ class NarodmonSensor(CoordinatorEntity):
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
-        self._update_state()
-        attr = self._attr.copy()
+        attr = self._device_attr.copy()
         attr[ATTR_ATTRIBUTION] = ATTRIBUTION
         return attr
+
+    async def async_update(self):
+        """Update entity state."""
+        await super().async_update()
+
+        for device in sorted(
+            self.coordinator.data["devices"], key=lambda x: x["distance"]
+        ):
+            for sensor in device["sensors"]:
+                if sensor["type"] == SENSOR_TYPES[self._sensor_type][ATTR_ID]:
+                    self._attr_state = sensor["value"]
+                    self._attr_native_unit_of_measurement = sensor["unit"]
+                    self._device_attr[ATTR_SENSOR_NAME] = sensor["name"]
+
+                    self._device_attr[ATTR_DEVICE_ID] = "D" + str(device["id"])
+                    self._device_attr[ATTR_DEVICE_NAME] = device["name"]
+                    self._device_attr[ATTR_DISTANCE] = device["distance"]
+                    self._device_attr[ATTR_LOCATION] = device["location"]
+                    self._device_attr[ATTR_LATITUDE] = device["lat"]
+                    self._device_attr[ATTR_LONGITUDE] = device["lon"]
+                    return
