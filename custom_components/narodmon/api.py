@@ -10,13 +10,14 @@ For more details about this sensor, please refer to the documentation at
 https://github.com/Limych/ha-narodmon/
 """
 import asyncio
+from http import HTTPStatus
 import logging
 import socket
 from typing import List, Optional
 
 import aiohttp
 import async_timeout
-from homeassistant.const import ATTR_ID, HTTP_OK
+from homeassistant.const import ATTR_ID
 
 from .const import SENSOR_TYPES, VERSION
 
@@ -78,7 +79,7 @@ class NarodmonApiClient:
                 async with self._session.post(
                     ENDPOINT_URL, headers=HEADERS, json=data
                 ) as resp:
-                    if resp.status != HTTP_OK:
+                    if resp.status != HTTPStatus.OK:
                         raise ApiError(
                             f"Invalid response from Narodmon API: {resp.status}"
                         )
