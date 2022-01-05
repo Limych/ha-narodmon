@@ -31,7 +31,7 @@ from homeassistant.const import (
 NAME = "Narodmon.ru Cloud Integration"
 DOMAIN = "narodmon"
 DOMAIN_DATA = f"{DOMAIN}_data"
-VERSION = "1.1.2"
+VERSION = "1.1.3-alpha"
 ATTRIBUTION = "Data provided by http://narodmon.ru/"
 ISSUE_URL = "https://github.com/Limych/ha-narodmon/issues"
 

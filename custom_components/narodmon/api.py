@@ -10,9 +10,9 @@ For more details about this sensor, please refer to the documentation at
 https://github.com/Limych/ha-narodmon/
 """
 import asyncio
-from http import HTTPStatus
 import logging
 import socket
+from http import HTTPStatus
 from typing import List, Optional
 
 import aiohttp
@@ -73,9 +73,7 @@ class NarodmonApiClient:
         """Get information from the API."""
         _LOGGER.debug("Request: '%s'", data)
         try:
-            async with async_timeout.timeout(
-                self._timeout, loop=asyncio.get_event_loop()
-            ):
+            async with async_timeout.timeout(self._timeout):
                 async with self._session.post(
                     ENDPOINT_URL, headers=HEADERS, json=data
                 ) as resp:

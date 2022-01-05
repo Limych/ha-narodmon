@@ -101,13 +101,16 @@ def get_uuid(hass: HomeAssistant) -> str:
     """Get client UUID."""
     uuid_fpath = hass.config.path(STORAGE_DIR, DOMAIN + ".uuid")
     try:
-        uuid = open(uuid_fpath).read()
+        with open(uuid_fpath, encoding="utf-8") as fp:
+            uuid = fp.read()
         _LOGGER.debug("Narodmon.ru client UUID: %s", uuid)
 
     except FileNotFoundError:
+        # pylint: disable=consider-using-f-string
         uuid = ("%032x" % random.getrandbits(128)).upper()
         _LOGGER.debug("Narodmon.ru client UUID not found. Created new one: %s", uuid)
-        open(uuid_fpath, "w").write(uuid)
+        with open(uuid_fpath, "w", encoding="utf-8") as fp:
+            fp.write(uuid)
 
     return uuid
 

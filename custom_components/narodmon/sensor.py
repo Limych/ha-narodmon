@@ -76,7 +76,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_d
         # async_add_devices([NarodmonSensor(coordinator, entry)])
 
 
-# pylint: disable=r0902
+# pylint: disable=too-many-instance-attributes
 class NarodmonSensor(CoordinatorEntity, SensorEntity):
     """Implementation of an NarodMon.ru sensor."""
 
