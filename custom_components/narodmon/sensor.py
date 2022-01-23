@@ -1,8 +1,6 @@
-#
-#  Copyright (c) 2021, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
+#  Copyright (c) 2021-2022, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
 #  Creative Commons BY-NC-SA 4.0 International Public License
 #  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
-#
 """
 The NarodMon.ru Cloud Integration Component.
 
@@ -10,6 +8,7 @@ For more details about this sensor, please refer to the documentation at
 https://github.com/Limych/ha-narodmon/
 """
 import logging
+from typing import Any, Mapping, Optional
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
@@ -101,29 +100,40 @@ class NarodmonSensor(CoordinatorEntity, SensorEntity):
         }
 
     @property
-    def device_state_attributes(self):
+    def device_state_attributes(self) -> Optional[Mapping[str, Any]]:
         """Return the state attributes."""
         attr = self._device_attr.copy()
         attr[ATTR_ATTRIBUTION] = ATTRIBUTION
         return attr
 
-    async def async_update(self):
+    def _update_state(self):
         """Update entity state."""
-        await super().async_update()
-
         for device in sorted(
             self.coordinator.data["devices"], key=lambda x: x["distance"]
         ):
             for sensor in device["sensors"]:
                 if sensor["type"] == SENSOR_TYPES[self._sensor_type][ATTR_ID]:
-                    self._attr_state = sensor["value"]
+                    self._attr_native_value = sensor["value"]
                     self._attr_native_unit_of_measurement = sensor["unit"]
-                    self._device_attr[ATTR_SENSOR_NAME] = sensor["name"]
 
+                    self._device_attr[ATTR_SENSOR_NAME] = sensor["name"]
                     self._device_attr[ATTR_DEVICE_ID] = "D" + str(device["id"])
                     self._device_attr[ATTR_DEVICE_NAME] = device["name"]
                     self._device_attr[ATTR_DISTANCE] = device["distance"]
                     self._device_attr[ATTR_LOCATION] = device["location"]
                     self._device_attr[ATTR_LATITUDE] = device["lat"]
                     self._device_attr[ATTR_LONGITUDE] = device["lon"]
+
+                    _LOGGER.debug(
+                        "Set sensor '%s' state to %s%s",
+                        self._attr_name,
+                        self._attr_native_value,
+                        self._attr_native_unit_of_measurement,
+                    )
                     return
+
+    @property
+    def native_value(self) -> None:
+        """Return the value reported by the sensor."""
+        self._update_state()
+        return super().native_value

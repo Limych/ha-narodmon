@@ -13,5 +13,5 @@ narodmon:
   devices:
     - name: "Narodmon"
       sensors:
-        - temperture
+        - temperature
         - humidity
