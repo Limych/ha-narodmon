@@ -8,7 +8,6 @@ For more details about this sensor, please refer to the documentation at
 https://github.com/Limych/ha-narodmon/
 """
 import logging
-from typing import Any, Mapping, Optional
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
@@ -30,8 +29,7 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from custom_components.narodmon import YAML_DOMAIN
-
+from . import YAML_DOMAIN
 from .const import (
     ATTR_DEVICE_NAME,
     ATTR_DISTANCE,
@@ -83,7 +81,6 @@ class NarodmonSensor(CoordinatorEntity, SensorEntity):
         """Class initialization."""
         super().__init__(coordinator)
         self._sensor_type = sensor_type
-        self._device_attr = {}
 
         self._attr_unique_id = f"{device_id}-{sensor_type}"
         self._attr_name = name
@@ -98,13 +95,9 @@ class NarodmonSensor(CoordinatorEntity, SensorEntity):
             "name": NAME,
             "model": VERSION,
         }
-
-    @property
-    def device_state_attributes(self) -> Optional[Mapping[str, Any]]:
-        """Return the state attributes."""
-        attr = self._device_attr.copy()
-        attr[ATTR_ATTRIBUTION] = ATTRIBUTION
-        return attr
+        self._attr_extra_state_attributes = {
+            ATTR_ATTRIBUTION: ATTRIBUTION,
+        }
 
     def _update_state(self):
         """Update entity state."""
@@ -114,15 +107,20 @@ class NarodmonSensor(CoordinatorEntity, SensorEntity):
             for sensor in device["sensors"]:
                 if sensor["type"] == SENSOR_TYPES[self._sensor_type][ATTR_ID]:
                     self._attr_native_value = sensor["value"]
-                    self._attr_native_unit_of_measurement = sensor["unit"]
 
-                    self._device_attr[ATTR_SENSOR_NAME] = sensor["name"]
-                    self._device_attr[ATTR_DEVICE_ID] = "D" + str(device["id"])
-                    self._device_attr[ATTR_DEVICE_NAME] = device["name"]
-                    self._device_attr[ATTR_DISTANCE] = device["distance"]
-                    self._device_attr[ATTR_LOCATION] = device["location"]
-                    self._device_attr[ATTR_LATITUDE] = device["lat"]
-                    self._device_attr[ATTR_LONGITUDE] = device["lon"]
+                    self._attr_extra_state_attributes[ATTR_SENSOR_NAME] = sensor["name"]
+                    self._attr_extra_state_attributes[ATTR_DEVICE_ID] = "D" + str(
+                        device["id"]
+                    )
+                    self._attr_extra_state_attributes[ATTR_DEVICE_NAME] = device["name"]
+                    self._attr_extra_state_attributes[ATTR_DISTANCE] = device[
+                        "distance"
+                    ]
+                    self._attr_extra_state_attributes[ATTR_LOCATION] = device[
+                        "location"
+                    ]
+                    self._attr_extra_state_attributes[ATTR_LATITUDE] = device["lat"]
+                    self._attr_extra_state_attributes[ATTR_LONGITUDE] = device["lon"]
 
                     _LOGGER.debug(
                         "Set sensor '%s' state to %s%s",
