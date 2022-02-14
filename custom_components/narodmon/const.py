@@ -23,15 +23,20 @@ from homeassistant.const import (
     DEVICE_CLASS_ILLUMINANCE,
     DEVICE_CLASS_PRESSURE,
     DEVICE_CLASS_TEMPERATURE,
+    LENGTH_MILLIMETERS,
     LIGHT_LUX,
+    PERCENTAGE,
+    PRESSURE_MMHG,
+    SPEED_METERS_PER_SECOND,
     TEMP_CELSIUS,
+    UV_INDEX,
 )
 
 # Base component constants
 NAME = "Narodmon.ru Cloud Integration"
 DOMAIN = "narodmon"
 DOMAIN_DATA = f"{DOMAIN}_data"
-VERSION = "1.1.4"
+VERSION = "1.1.5-alpha"
 ATTRIBUTION = "Data provided by http://narodmon.ru/"
 ISSUE_URL = "https://github.com/Limych/ha-narodmon/issues"
 
@@ -60,6 +65,9 @@ If you have ANY issues with this you need to open an issue here:
 """
 
 
+MICROROENTGEN_PER_HOUR = "µR/h"
+
+
 SENSOR_TYPES = {
     "temperature": {
         ATTR_ID: 1,
@@ -71,21 +79,21 @@ SENSOR_TYPES = {
     "humidity": {
         ATTR_ID: 2,
         ATTR_NAME: "Humidity",
-        # ATTR_UNIT_OF_MEASUREMENT: PERCENTAGE,
+        ATTR_UNIT_OF_MEASUREMENT: PERCENTAGE,
         ATTR_DEVICE_CLASS: DEVICE_CLASS_HUMIDITY,
         ATTR_ICON: None,
     },
     "pressure": {
         ATTR_ID: 3,
         ATTR_NAME: "Pressure",
-        # ATTR_UNIT_OF_MEASUREMENT: PRESSURE_HPA,
+        ATTR_UNIT_OF_MEASUREMENT: PRESSURE_MMHG,
         ATTR_DEVICE_CLASS: DEVICE_CLASS_PRESSURE,
         ATTR_ICON: None,
     },
     "wind_speed": {
         ATTR_ID: 4,
         ATTR_NAME: "Wind speed",
-        # ATTR_UNIT_OF_MEASUREMENT: ,
+        ATTR_UNIT_OF_MEASUREMENT: SPEED_METERS_PER_SECOND,
         ATTR_DEVICE_CLASS: None,
         ATTR_ICON: "mdi:weather-windy",
     },
@@ -99,7 +107,7 @@ SENSOR_TYPES = {
     "precipitation": {
         ATTR_ID: 9,
         ATTR_NAME: "Precipitation",
-        # ATTR_UNIT_OF_MEASUREMENT: ,
+        ATTR_UNIT_OF_MEASUREMENT: LENGTH_MILLIMETERS,
         ATTR_DEVICE_CLASS: None,
         ATTR_ICON: "mdi:weather-pouring",
     },
@@ -113,14 +121,14 @@ SENSOR_TYPES = {
     "radiation": {
         ATTR_ID: 12,
         ATTR_NAME: "Radiation",
-        # ATTR_UNIT_OF_MEASUREMENT: ,
+        ATTR_UNIT_OF_MEASUREMENT: MICROROENTGEN_PER_HOUR,
         ATTR_DEVICE_CLASS: None,
         ATTR_ICON: "mdi:radioactive",
     },
     "uv": {
         ATTR_ID: 20,
         ATTR_NAME: "UV radiation",
-        # ATTR_UNIT_OF_MEASUREMENT: ,
+        ATTR_UNIT_OF_MEASUREMENT: UV_INDEX,
         ATTR_DEVICE_CLASS: None,
         ATTR_ICON: "mdi:weather-sunny",
     },
