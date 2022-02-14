@@ -1,8 +1,6 @@
-#
-#  Copyright (c) 2021, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
+#  Copyright (c) 2021-2022, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
 #  Creative Commons BY-NC-SA 4.0 International Public License
 #  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
-#
 """
 The NarodMon.ru Cloud Integration Component.
 
@@ -12,11 +10,9 @@ https://github.com/Limych/ha-narodmon/
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.const import CONF_TIMEOUT, CONF_VERIFY_SSL
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from . import cv_apikey, get_uuid
 from .api import NarodmonApiClient
-from .const import CONF_APIKEY, DOMAIN  # pylint: disable=unused-import
+from .const import DOMAIN  # pylint: disable=unused-import
 
 
 class NarodmonFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -62,17 +58,11 @@ class NarodmonFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     async def _test_credentials(self, config):
         """Return true if credentials is valid."""
         try:
-            uuid = get_uuid(self.hass)
-
-            apikey = config.get(CONF_APIKEY)
             verify_ssl = config.get(CONF_VERIFY_SSL)
             timeout = config.get(CONF_TIMEOUT)
 
-            session = async_get_clientsession(self.hass, verify_ssl=verify_ssl)
-            client = NarodmonApiClient(session, uuid, apikey, timeout)
-            await client.async_get_nearby_sensors(
-                self.hass.config.latitude, self.hass.config.longitude, ["humidity"]
-            )
+            client = NarodmonApiClient(self.hass, verify_ssl, timeout)
+            await client.async_init()
             return True
 
         except Exception:  # pylint: disable=broad-except
@@ -84,11 +74,7 @@ class NarodmonFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             cfg = {}
         return self.async_show_form(
             step_id="user",
-            data_schema=vol.Schema(
-                {
-                    vol.Required(CONF_APIKEY, default=cfg.get(CONF_APIKEY)): cv_apikey,
-                }
-            ),
+            data_schema=vol.Schema({}),
             errors=self._errors,
         )
 

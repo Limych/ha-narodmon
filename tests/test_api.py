@@ -1,23 +1,39 @@
 """Tests for Narodmon.ru API."""
 import asyncio
+import os
 
 import aiohttp
+import yaml
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from pytest import raises
 from pytest_homeassistant_custom_component.common import load_fixture
 
-from custom_components.narodmon.api import ENDPOINT_URL, ApiError, NarodmonApiClient
-from custom_components.narodmon.const import DEFAULT_TIMEOUT
+from custom_components.narodmon.api import (
+    ENDPOINT_URL,
+    KHASH,
+    ApiError,
+    NarodmonApiClient,
+)
+from custom_components.narodmon.const import DEFAULT_TIMEOUT, DEFAULT_VERIFY_SSL
+
+ROOT = os.path.dirname(os.path.abspath(f"{__file__}/.."))
+
+
+async def test_hash():
+    """Test getting nearby sensors."""
+    secrets_file = f"{ROOT}/secrets.yaml"
+    with open(secrets_file, encoding="utf8") as fp:
+        key = (yaml.safe_load(fp) or {}).get("api_key")
+
+    if key is not None:
+        assert key == KHASH
 
 
 async def test_get_nearby_sensors(hass: HomeAssistant, aioclient_mock):
     """Test getting nearby sensors."""
 
     # To test the api submodule, we first create an instance of our API client
-    api = NarodmonApiClient(
-        async_get_clientsession(hass), "some_uuid", "some_api", DEFAULT_TIMEOUT
-    )
+    api = NarodmonApiClient(hass, DEFAULT_VERIFY_SSL, DEFAULT_TIMEOUT)
 
     # Use aioclient_mock which is provided by `pytest_homeassistant_custom_component`
     # to mock responses to aiohttp requests. In this case we are telling the mock to
@@ -39,9 +55,7 @@ async def test_api_wrapper(hass: HomeAssistant, aioclient_mock, caplog):
     """Test getting nearby sensors."""
 
     # To test the api submodule, we first create an instance of our API client
-    api = NarodmonApiClient(
-        async_get_clientsession(hass), "some_uuid", "some_api", DEFAULT_TIMEOUT
-    )
+    api = NarodmonApiClient(hass, DEFAULT_VERIFY_SSL, DEFAULT_TIMEOUT)
 
     caplog.clear()
     aioclient_mock.clear_requests()
@@ -50,9 +64,9 @@ async def test_api_wrapper(hass: HomeAssistant, aioclient_mock, caplog):
     with raises(ApiError):
         await api._api_wrapper({})
     assert (
-        len(caplog.record_tuples) == 2
+        len(caplog.record_tuples) == 3
         and "[None] Invalid response from Narodmon API: 404"
-        in caplog.record_tuples[1][2]
+        in caplog.record_tuples[2][2]
     )
 
     caplog.clear()

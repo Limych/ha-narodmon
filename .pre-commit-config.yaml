@@ -6,6 +6,11 @@ repos:
         entry: bin/update_manifest
         language: script
         files: ^custom_components/.+/const\.py$
+      - id: calc_hash
+        name: Calculate hash
+        entry: bin/calc_hash.py
+        language: script
+        files: ^custom_components/.+/.+\.py$
   - repo: https://github.com/asottile/pyupgrade
     rev: v2.7.4
     hooks:

@@ -50,7 +50,6 @@ _Component to integrate with Narodmon.ru cloud and automatic search for the near
 ```yaml
 # Example configuration.yaml entry
 narodmon:
-  apikey: YOUR_NARODMON_API
   devices:
     - name: "Narodmon"
       sensors:
@@ -69,13 +68,6 @@ I put a lot of work into making this repo and component available and updated to
 </p>
 
 ### Configuration Variables
-
-**apikey**:\
-  _(string) (**Required**)_\
-  The API key is a unique identifier that authenticates requests associated with your project.
-
-> **_Note_**:\
-> To obtain a key, you need to register on [narodmon.ru](https://narodmon.ru/), then open the menu item `Profile`-> `My applications`-> `New key` and create an API key. You can give any name to the key at your discretion.
 
 **devices**:\
   _(list) (**Required**)_\

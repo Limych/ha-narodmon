@@ -1,8 +1,6 @@
-#
-#  Copyright (c) 2021, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
+#  Copyright (c) 2021-2022, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
 #  Creative Commons BY-NC-SA 4.0 International Public License
 #  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
-#
 """
 The NarodMon.ru Cloud Integration Component.
 
@@ -11,10 +9,9 @@ https://github.com/Limych/ha-narodmon/
 """
 import asyncio
 import logging
-import random
-import re
+import os
 from datetime import timedelta
-from typing import Any, List
+from typing import List
 
 import voluptuous as vol
 from homeassistant.components.sensor import DOMAIN as SENSOR
@@ -32,7 +29,6 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.storage import STORAGE_DIR
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
@@ -50,13 +46,6 @@ from .const import (
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-def cv_apikey(value: Any) -> str:
-    """Validate and coerce a NarodMon.ru API key value."""
-    if isinstance(value, str) and re.match("^[0-9a-z]+$", value, re.IGNORECASE):
-        return value
-    raise vol.Invalid(f"Invalid API Key {value}")
-
-
 DEVICE_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_NAME): cv.string,
@@ -71,7 +60,7 @@ DEVICE_SCHEMA = vol.Schema(
 
 CONFIG_SCHEMA_ROOT = vol.Schema(
     {
-        vol.Required(CONF_APIKEY): cv_apikey,
+        vol.Optional(CONF_APIKEY): cv.deprecated(CONF_APIKEY),
         vol.Optional(CONF_VERIFY_SSL, default=DEFAULT_VERIFY_SSL): cv.boolean,
         vol.Optional(CONF_TIMEOUT, default=DEFAULT_TIMEOUT): cv.positive_int,
         vol.Required(CONF_DEVICES): vol.All(cv.ensure_list, [DEVICE_SCHEMA]),
@@ -94,25 +83,14 @@ async def async_setup(hass: HomeAssistant, config):
             DOMAIN, context={"source": SOURCE_IMPORT}, data={}
         )
     )
+
+    # Remove legacy UUID file from the storage dir
+    legacy_uuid_fpath = hass.config.path(STORAGE_DIR, DOMAIN + ".uuid")
+    if os.path.exists(legacy_uuid_fpath):  # pragma: no cover
+        await hass.async_add_executor_job(os.remove, legacy_uuid_fpath)
+        _LOGGER.debug("Legacy UUID file removed (%s).", legacy_uuid_fpath)
+
     return True
-
-
-def get_uuid(hass: HomeAssistant) -> str:
-    """Get client UUID."""
-    uuid_fpath = hass.config.path(STORAGE_DIR, DOMAIN + ".uuid")
-    try:
-        with open(uuid_fpath, encoding="utf-8") as fp:
-            uuid = fp.read()
-        _LOGGER.debug("Narodmon.ru client UUID: %s", uuid)
-
-    except FileNotFoundError:
-        # pylint: disable=consider-using-f-string
-        uuid = ("%032x" % random.getrandbits(128)).upper()
-        _LOGGER.debug("Narodmon.ru client UUID not found. Created new one: %s", uuid)
-        with open(uuid_fpath, "w", encoding="utf-8") as fp:
-            fp.write(uuid)
-
-    return uuid
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
@@ -121,8 +99,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
 
-    uuid = get_uuid(hass)
-
     if entry.source == "import":
         if YAML_DOMAIN not in hass.data:  # pragma: no cover
             await hass.config_entries.async_remove(entry.entry_id)
@@ -130,12 +106,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
         config = hass.data[YAML_DOMAIN]
 
-        apikey = config.get(CONF_APIKEY)
         verify_ssl = config.get(CONF_VERIFY_SSL)
         timeout = config.get(CONF_TIMEOUT)
 
-        session = async_get_clientsession(hass, verify_ssl=verify_ssl)
-        client = NarodmonApiClient(session, uuid, apikey, timeout)
+        client = NarodmonApiClient(hass, verify_ssl, timeout)
 
         for index, device_config in enumerate(config.get(CONF_DEVICES)):
             latitude = device_config.get(CONF_LATITUDE, hass.config.latitude)
