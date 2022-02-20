@@ -8,10 +8,7 @@ For more details about this sensor, please refer to the documentation at
 https://github.com/Limych/ha-narodmon/
 """
 import asyncio
-import glob
-import hashlib
 import logging
-import os
 import socket
 import time
 from datetime import timedelta
@@ -38,7 +35,14 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import T
 from homeassistant.util import Throttle
 
-from .const import DEFAULT_TIMEOUT, DEFAULT_VERIFY_SSL, DOMAIN, VERSION
+from .const import (
+    DEFAULT_TIMEOUT,
+    DEFAULT_VERIFY_SSL,
+    DOMAIN,
+    ISSUE_URL,
+    KHASH,
+    VERSION,
+)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -53,27 +57,9 @@ DATA_VERSION = 1
 DATA_LAST_INIT_TS = "last_init"
 
 NARODMON_IDS: Final = Set[int]
-NARODMON_NEARBY_LISTENER: Final = Callable[[NARODMON_IDS], None]
+NARODMON_NEARBY_LISTENER: Final = Callable[[Dict[int, int]], Awaitable[None]]
 NARODMON_SENSORS_LIST: Final = List[Dict[str, Any]]
 NARODMON_SENSORS_DICT: Final = Dict[int, Dict[str, Any]]
-
-
-def dir_hash(path: str) -> str:
-    """Calculate cumulative hash of all Python files in directory."""
-    dhash = hashlib.md5()
-
-    for file in glob.iglob(f"{path}/**.py", recursive=True):
-        with open(file, "rb") as fp:
-            _LOGGER.debug("Hashing file %s", file)
-            dhash.update(fp.read())
-
-    _LOGGER.debug("Cumulative hash of all files: %s", dhash.hexdigest())
-    return dhash.hexdigest()
-
-
-cdir = os.path.dirname(__file__)
-with open(f"{cdir}/checksum.bin", "rb") as fpt:
-    KHASH = "".join(chr(ord(a) ^ b) for a, b in zip(dir_hash(cdir), fpt.read()))
 
 
 class ApiError(Exception):
@@ -100,7 +86,7 @@ class NarodmonApiClient(Generic[T]):
         self.hass = hass
         self.sensors: NARODMON_SENSORS_DICT = {}
 
-        self._apikey = apikey
+        self._apikey = apikey or self._khash
         self._session = async_get_clientsession(hass, verify_ssl=verify_ssl)
         self._timeout = timeout
         self._devices: Dict[int, float] = {}
@@ -131,7 +117,7 @@ class NarodmonApiClient(Generic[T]):
 
     async def async_set_nearby_listener(
         self,
-        target: Callable[[NARODMON_IDS], Awaitable[T]],
+        target: NARODMON_NEARBY_LISTENER,
         latitude: float,
         longitude: float,
         sensor_types: NARODMON_IDS,
@@ -148,6 +134,27 @@ class NarodmonApiClient(Generic[T]):
         self._nearby_sensor_types = sensor_types
 
         self._nearby_listener = target
+
+    @property
+    def _khash(self) -> str:
+        """Calculate khash."""
+
+        def data_hash(data: str, hash_len: int) -> List[int]:
+            """Calculate hash of given data."""
+            i = 0
+            khash = [0] * hash_len
+
+            for char in data:
+                khash[i] = (khash[i] + ord(char)) % 256
+                i = (i + 1) % hash_len
+
+            return khash
+
+        khash = "".join(
+            chr(a ^ ord(b)) for a, b in zip(data_hash(ISSUE_URL, len(KHASH)), KHASH)
+        )
+
+        return khash
 
     @staticmethod
     def _convert2dict(device: Dict[str, Any]) -> NARODMON_SENSORS_DICT:
@@ -221,12 +228,12 @@ class NarodmonApiClient(Generic[T]):
             self._limit = len(devices)
             _LOGGER.debug("PubsLimit set to %d", self._limit)
 
-        sensors: NARODMON_IDS = set()
+        sensors: Dict[int, int] = {}
         for device in sorted(data["devices"], key=lambda x: x["distance"]):
             for sensor in device["sensors"]:
                 if sensor["type"] in self._nearby_sensor_types:
                     self._nearby_sensor_types.remove(sensor["type"])
-                    sensors.add(sensor["id"])
+                    sensors[sensor["id"]] = device["id"]
                     if device["id"] not in self._devices:
                         self._devices[int(device["id"])] = now_ts
                         self.sensors.update(self._convert2dict(device))
@@ -266,7 +273,7 @@ class NarodmonApiClient(Generic[T]):
 
         _LOGGER.debug("Request: '%s'", data)
 
-        data["api_key"] = self._apikey or KHASH
+        data["api_key"] = self._apikey
         data["lang"] = "en"
 
         try:

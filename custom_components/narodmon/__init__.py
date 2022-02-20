@@ -12,7 +12,7 @@ import logging
 import os
 import re
 from datetime import timedelta
-from typing import Any, List
+from typing import Any, Dict, List
 
 import voluptuous as vol
 from homeassistant.components.sensor import DOMAIN as SENSOR
@@ -187,6 +187,7 @@ class NarodmonDataUpdateCoordinator(DataUpdateCoordinator):
         self.latitude = latitude
         self.longitude = longitude
         self.types = types
+        self.devices: NARODMON_IDS = set()
         self.sensors: NARODMON_IDS = set()
 
         self._first_run = True
@@ -209,11 +210,12 @@ class NarodmonDataUpdateCoordinator(DataUpdateCoordinator):
                         tps.remove(sensor["type"])
 
                 if tps:
-
-                    async def async_nearby_listener(new_sensors: NARODMON_IDS) -> None:
-                        self.sensors = self.sensors.union(
-                            new_sensors
-                        )  # pragma: no cover
+                    # pragma: no cover
+                    async def async_nearby_listener(
+                        new_sensors: Dict[int, int]
+                    ) -> None:
+                        self.devices = self.devices.union(new_sensors.values())
+                        self.sensors = self.sensors.union(new_sensors.keys())
 
                     await self.api.async_set_nearby_listener(
                         async_nearby_listener, self.latitude, self.longitude, tps

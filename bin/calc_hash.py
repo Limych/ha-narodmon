@@ -4,11 +4,11 @@
 #  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
 """The module checksum calculator."""
 import argparse
-import glob
-import hashlib
 import logging
 import os
+import re
 import sys
+from typing import List
 
 import yaml
 
@@ -25,17 +25,16 @@ VERSION = "1.0.0"
 ROOT = os.path.dirname(os.path.abspath(f"{__file__}/.."))
 
 
-def dir_hash(path: str) -> str:
-    """Calculate cumulative hash of all Python files in directory."""
-    dhash = hashlib.md5()
+def data_hash(data: str, hash_len: int) -> List[int]:
+    """Calculate hash of given data."""
+    i = 0
+    khash = [0] * hash_len
 
-    for file in glob.iglob(f"{path}/**.py", recursive=True):
-        with open(file, "rb") as fp:
-            _LOGGER.debug("Hashing file %s", file)
-            dhash.update(fp.read())
+    for char in data:
+        khash[i] = (khash[i] + ord(char)) % 256
+        i = (i + 1) % hash_len
 
-    _LOGGER.debug("Cumulative hash of all files: %s", dhash.hexdigest())
-    return dhash.hexdigest()
+    return khash
 
 
 def main():
@@ -74,16 +73,28 @@ def main():
         sys.exit(1)
 
     pkg_dir = f"{ROOT}/custom_components/narodmon"
-    dhash = "".join(chr(ord(a) ^ ord(b)) for a, b in zip(dir_hash(pkg_dir), key))
-    _LOGGER.debug("Encode key: %s => %s", repr(key), repr(dhash))
+    fpath = f"{pkg_dir}/const.py"
 
-    data_file = f"{pkg_dir}/checksum.bin"
+    with open(fpath, encoding="utf8") as fp:
+        src = fp.read()
+    metadata = dict(re.findall(r'([a-z_]+) = "([^"]*)"', src, re.IGNORECASE))
+    metadata.update(dict(re.findall(r"([a-z_]+) = '([^']*)'", src, re.IGNORECASE)))
+
+    khash = "".join(
+        chr(a ^ ord(b))
+        for a, b in zip(data_hash(metadata.get("ISSUE_URL"), len(key)), key)
+    )
+    _LOGGER.debug("Encode key: %s => %s", repr(key), repr(khash))
+
+    khash = re.sub(r"\\\$", "$", re.sub(r"^'|'$", '"', re.escape(repr(khash))))
+    res = re.sub(r"KHASH = [^\n]+", f"KHASH = {khash}", src)
+
     if args.dry_run:
-        print(f"Hash would be stored to {data_file}")
+        print(f"Hash would be stored to {fpath}")
     else:
-        _LOGGER.debug("Storing hash to %s", data_file)
-        with open(data_file, "wb") as fp:
-            fp.write(dhash.encode("utf8"))
+        _LOGGER.debug("Storing hash to %s", fpath)
+        with open(fpath, "w", encoding="utf8") as fp:
+            fp.write(res)
 
 
 if __name__ == "__main__":

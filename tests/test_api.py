@@ -13,7 +13,6 @@ from pytest_homeassistant_custom_component.common import load_fixture
 from custom_components.narodmon.api import (
     DATA_LAST_INIT_TS,
     ENDPOINT_URL,
-    KHASH,
     NARODMON_IDS,
     ApiError,
     NarodmonApiClient,
@@ -55,17 +54,21 @@ TEST_DEVICE2_RESULT = {
 }
 
 
-async def test_hash():
-    """Test getting nearby sensors."""
+# pylint: disable=protected-access
+async def test_khash(hass: HomeAssistant):
+    """Test calculation khash."""
+
+    # To test the api submodule, we first create an instance of our API client
+    api = NarodmonApiClient(hass, DEFAULT_VERIFY_SSL, DEFAULT_TIMEOUT)
+
     secrets_file = f"{ROOT}/secrets.yaml"
     try:
         with open(secrets_file, encoding="utf8") as fp:
-            key = (yaml.safe_load(fp) or {}).get("api_key")
+            key = yaml.safe_load(fp).get("api_key")
 
-        if key is not None:
-            assert key == KHASH
+        assert key == api._khash
 
-    except FileNotFoundError:
+    except (FileNotFoundError, KeyError):
         pass
 
 
