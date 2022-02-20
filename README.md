@@ -21,6 +21,10 @@ _Component to integrate with Narodmon.ru cloud and automatic search for the near
 - At the moment, configuring the component is only possible through `configuration.yaml`. Support for configuration via Home Assistant UI will be added in the future.
 - The Narodmon service has limits on the amount of data returned per request and on the frequency of sending requests. Therefore, if you configure several sensors, at first some of them may be in the `Unavailable` state. As data is received from the server, all sensors will receive their values.
 
+## Breaking changes
+
+- Since version 2.0.0 the field `apikey` is no longer required and is not recommended. Fill it out only if you already have your own API key with special limits. Otherwise, remove this field from your configuration.
+
 ## Installation
 
 ### Install via HACS (recommended)
