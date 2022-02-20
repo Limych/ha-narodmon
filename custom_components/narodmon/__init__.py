@@ -10,8 +10,9 @@ https://github.com/Limych/ha-narodmon/
 import asyncio
 import logging
 import os
+import re
 from datetime import timedelta
-from typing import List
+from typing import Any, List
 
 import voluptuous as vol
 from homeassistant.components.sensor import DOMAIN as SENSOR
@@ -47,6 +48,13 @@ from .const import (
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
+def cv_apikey(value: Any) -> str:
+    """Validate and coerce a NarodMon.ru API key value."""
+    if isinstance(value, str) and re.match("^[0-9a-z]+$", value, re.IGNORECASE):
+        return value
+    raise vol.Invalid(f"Invalid API Key {value}")
+
+
 DEVICE_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_NAME): cv.string,
@@ -61,7 +69,7 @@ DEVICE_SCHEMA = vol.Schema(
 
 CONFIG_SCHEMA_ROOT = vol.Schema(
     {
-        vol.Optional(CONF_APIKEY): cv.deprecated(CONF_APIKEY),
+        vol.Optional(CONF_APIKEY): cv_apikey,
         vol.Optional(CONF_VERIFY_SSL, default=DEFAULT_VERIFY_SSL): cv.boolean,
         vol.Optional(CONF_TIMEOUT, default=DEFAULT_TIMEOUT): cv.positive_int,
         vol.Required(CONF_DEVICES): vol.All(cv.ensure_list, [DEVICE_SCHEMA]),
@@ -108,10 +116,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
         config = hass.data[YAML_DOMAIN]
 
-        verify_ssl = config.get(CONF_VERIFY_SSL)
-        timeout = config.get(CONF_TIMEOUT)
-
-        client = NarodmonApiClient(hass, verify_ssl, timeout)
+        client = NarodmonApiClient(
+            hass,
+            apikey=config.get(CONF_APIKEY),
+            verify_ssl=config.get(CONF_VERIFY_SSL),
+            timeout=config.get(CONF_TIMEOUT),
+        )
 
         for index, device_config in enumerate(config.get(CONF_DEVICES)):
             latitude = device_config.get(CONF_LATITUDE, hass.config.latitude)

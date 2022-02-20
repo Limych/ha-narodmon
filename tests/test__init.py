@@ -7,6 +7,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
+from voluptuous import Invalid
 
 from custom_components.narodmon import (
     DOMAIN,
@@ -15,10 +16,35 @@ from custom_components.narodmon import (
     async_reload_entry,
     async_setup_entry,
     async_unload_entry,
+    cv_apikey,
 )
 from custom_components.narodmon.api import NarodmonApiClient
 
 from .const import MOCK_YAML_CONFIG
+
+
+async def test_cv_apikey():
+    """Test API keys verification."""
+    # Valid keys
+    for apikey in [
+        "B46CD5A6B1BC28E3D",
+        "d41d8cd98f00b204e9800998ecf8427e",
+        "iTkToPPq6SFMOvM7kkcBxmHRcHsOVpVN",
+        "e852o0eK4DSEoImMsWoLDIpyB4g02iC486P9pY9b8WqJhmiwJBJqEUUgpRLB0z",
+        "MujSTK",
+    ]:
+        assert cv_apikey(apikey)
+
+    # Invalid keys
+    for apikey in [
+        "B46CD5A6B1BC28E3D+",
+        "=0b204e9800998ecf",
+        '2Q*j>*Q%ppgOK"~W',
+        123,
+        b"B46CD5A6B1BC28E3D",
+    ]:
+        with pytest.raises(Invalid):
+            cv_apikey(apikey)
 
 
 async def test_setup(hass: HomeAssistant):

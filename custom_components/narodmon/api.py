@@ -92,6 +92,7 @@ class NarodmonApiClient(Generic[T]):
     def __init__(
         self,
         hass: HomeAssistant,
+        apikey: str = None,
         verify_ssl: bool = DEFAULT_VERIFY_SSL,
         timeout: int = DEFAULT_TIMEOUT,
     ) -> None:
@@ -99,6 +100,7 @@ class NarodmonApiClient(Generic[T]):
         self.hass = hass
         self.sensors: NARODMON_SENSORS_DICT = {}
 
+        self._apikey = apikey
         self._session = async_get_clientsession(hass, verify_ssl=verify_ssl)
         self._timeout = timeout
         self._devices: Dict[int, float] = {}
@@ -264,7 +266,7 @@ class NarodmonApiClient(Generic[T]):
 
         _LOGGER.debug("Request: '%s'", data)
 
-        data["api_key"] = KHASH
+        data["api_key"] = self._apikey or KHASH
         data["lang"] = "en"
 
         try:

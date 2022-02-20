@@ -61,7 +61,9 @@ class NarodmonFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             verify_ssl = config.get(CONF_VERIFY_SSL)
             timeout = config.get(CONF_TIMEOUT)
 
-            client = NarodmonApiClient(self.hass, verify_ssl, timeout)
+            client = NarodmonApiClient(
+                self.hass, verify_ssl=verify_ssl, timeout=timeout
+            )
             await client.async_init()
             return True
 

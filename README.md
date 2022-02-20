@@ -70,6 +70,15 @@ I put a lot of work into making this repo and component available and updated to
 
 ### Configuration Variables
 
+**apikey**:\
+  _(string) (Optional)_\
+  The API key is a unique identifier that authenticates requests associated with your project.
+
+> **_Note_**:\
+> This field is no longer required and is not recommended. Fill it out only if you already have your own API key with special limits.
+>
+> To obtain a key, you need to register on [narodmon.ru](https://narodmon.ru/), then open the menu item `Profile`-> `My applications`-> `New key` and create an API key. You can give any name to the key at your discretion.
+
 **devices**:\
   _(list) (**Required**)_\
   List of virtual devices with uniform settings. See details below.

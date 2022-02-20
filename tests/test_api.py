@@ -58,11 +58,15 @@ TEST_DEVICE2_RESULT = {
 async def test_hash():
     """Test getting nearby sensors."""
     secrets_file = f"{ROOT}/secrets.yaml"
-    with open(secrets_file, encoding="utf8") as fp:
-        key = (yaml.safe_load(fp) or {}).get("api_key")
+    try:
+        with open(secrets_file, encoding="utf8") as fp:
+            key = (yaml.safe_load(fp) or {}).get("api_key")
 
-    if key is not None:
-        assert key == KHASH
+        if key is not None:
+            assert key == KHASH
+
+    except FileNotFoundError:
+        pass
 
 
 # pylint: disable=protected-access
