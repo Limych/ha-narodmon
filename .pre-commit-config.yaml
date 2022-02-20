@@ -11,6 +11,7 @@ repos:
         entry: bin/calc_hash.py
         language: script
         files: ^custom_components/.+/.+\.py$
+        pass_filenames: false
   - repo: https://github.com/asottile/pyupgrade
     rev: v2.7.4
     hooks:

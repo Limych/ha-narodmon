@@ -14,18 +14,31 @@ import logging
 import os
 import socket
 import time
+from datetime import timedelta
 from http import HTTPStatus
-from typing import Any, Dict, List, Optional
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    Dict,
+    Final,
+    Generic,
+    List,
+    Optional,
+    Set,
+    Union,
+)
 
 import aiohttp
 import async_timeout
-from homeassistant.const import ATTR_ID
 from homeassistant.const import __short_version__ as HASS_VERSION
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import instance_id, storage
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.update_coordinator import T
+from homeassistant.util import Throttle
 
-from .const import DEFAULT_TIMEOUT, DEFAULT_VERIFY_SSL, DOMAIN, SENSOR_TYPES, VERSION
+from .const import DEFAULT_TIMEOUT, DEFAULT_VERIFY_SSL, DOMAIN, VERSION
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -38,6 +51,11 @@ HEADERS = {
 DATA_VERSION = 1
 
 DATA_LAST_INIT_TS = "last_init"
+
+NARODMON_IDS: Final = Set[int]
+NARODMON_NEARBY_LISTENER: Final = Callable[[NARODMON_IDS], None]
+NARODMON_SENSORS_LIST: Final = List[Dict[str, Any]]
+NARODMON_SENSORS_DICT: Final = Dict[int, Dict[str, Any]]
 
 
 def dir_hash(path: str) -> str:
@@ -53,7 +71,7 @@ def dir_hash(path: str) -> str:
     return dhash.hexdigest()
 
 
-cdir = os.path.dirname(f"{__file__}")
+cdir = os.path.dirname(__file__)
 with open(f"{cdir}/checksum.bin", "rb") as fpt:
     KHASH = "".join(chr(ord(a) ^ b) for a, b in zip(dir_hash(cdir), fpt.read()))
 
@@ -68,7 +86,7 @@ class ApiError(Exception):
         self.status = status
 
 
-class NarodmonApiClient:
+class NarodmonApiClient(Generic[T]):
     """Narodmon.ru API client class."""
 
     def __init__(
@@ -77,13 +95,89 @@ class NarodmonApiClient:
         verify_ssl: bool = DEFAULT_VERIFY_SSL,
         timeout: int = DEFAULT_TIMEOUT,
     ) -> None:
-        """Narodmon.ru API Client."""
+        """Initialize coordinator."""
         self.hass = hass
+        self.sensors: NARODMON_SENSORS_DICT = {}
 
         self._session = async_get_clientsession(hass, verify_ssl=verify_ssl)
         self._timeout = timeout
+        self._devices: Dict[int, float] = {}
+        self._sensors_last_updated = False
+        self._nearby_listener: Optional[NARODMON_NEARBY_LISTENER] = None
+        self._nearby_latitude: Optional[float] = None
+        self._nearby_longitude: Optional[float] = None
+        self._nearby_sensor_types: NARODMON_IDS = set()
+        self._limit: int = 1
 
-    async def async_init(self):
+    @property
+    def devices(self) -> NARODMON_IDS:
+        """Return list of active devices."""
+        return set(self._devices.keys())
+
+    @devices.setter
+    def devices(self, value: NARODMON_IDS) -> None:
+        """Set list of active devices."""
+        self._devices = {i: self._devices.get(i, 0) for i in value}
+
+    @property
+    def _devices4update(self) -> NARODMON_IDS:
+        result = set(
+            sorted(self._devices.keys(), key=lambda x: self._devices[x])[: self._limit]
+        )
+        _LOGGER.debug("_devices4update(%s): %s", self._devices, result)
+        return result
+
+    async def async_set_nearby_listener(
+        self,
+        target: Callable[[NARODMON_IDS], Awaitable[T]],
+        latitude: float,
+        longitude: float,
+        sensor_types: NARODMON_IDS,
+    ) -> None:
+        """Set listener for nearby sensors async search request."""
+        _LOGGER.debug(
+            "Set new nearby sensors listener: %s @[%f, %f].",
+            sensor_types,
+            latitude,
+            longitude,
+        )
+        self._nearby_latitude = latitude
+        self._nearby_longitude = longitude
+        self._nearby_sensor_types = sensor_types
+
+        self._nearby_listener = target
+
+    @staticmethod
+    def _convert2dict(device: Dict[str, Any]) -> NARODMON_SENSORS_DICT:
+        """Convert device sensors list to dict and set device ID for each sensor."""
+        result = {}
+        dev = device.copy()
+        sensors = dev["sensors"]
+        dev.pop("sensors", None)
+
+        for item in sensors:
+            item["device"] = dev
+            result[int(item["id"])] = item
+
+        return result
+
+    @Throttle(timedelta(minutes=1))
+    async def async_update_data(self) -> NARODMON_SENSORS_DICT:
+        """Update data iterator."""
+        await self.async_init()
+
+        if (not self.devices or self._sensors_last_updated) and self._nearby_listener:
+            await self._async_search_nearby_sensors()
+
+        elif self.devices:
+            await self._async_update_sensors()
+
+        else:
+            _LOGGER.debug("Nothing to update. :-/")
+
+        return self.sensors
+
+    async def async_init(self) -> None:
         """Initialize API."""
         store = storage.Store(self.hass, DATA_VERSION, DOMAIN, True)
         data: Dict[str, Any] = await store.async_load() or {
@@ -94,7 +188,7 @@ class NarodmonApiClient:
         if data[DATA_LAST_INIT_TS] > int(now_ts - 86400):
             return
 
-        await self._api_wrapper(
+        await self._async_api_wrapper(
             {
                 "cmd": "appInit",
                 "version": VERSION,
@@ -106,32 +200,73 @@ class NarodmonApiClient:
 
         await store.async_save(data)
 
-    # @singleton.singleton(DOMAIN)
-    async def async_get_nearby_sensors(
-        self, latitude: float, longitude: float, types: List[str]
-    ) -> dict:
-        """Get list of nearby sensors."""
-        await self.async_init()
+    async def _async_search_nearby_sensors(self) -> None:
+        """Search for nearby sensors of defined types."""
+        now_ts = int(time.time())
 
-        return await self._api_wrapper(
+        data = await self._async_api_wrapper(
             {
                 "cmd": "sensorsNearby",
-                "lat": latitude,
-                "lon": longitude,
-                "types": ",".join([str(SENSOR_TYPES[i][ATTR_ID]) for i in types]),
-                "limit": 50,
+                "lat": self._nearby_latitude,
+                "lon": self._nearby_longitude,
+                "types": ",".join([str(i) for i in self._nearby_sensor_types]),
             }
         )
+        self._sensors_last_updated = not self._devices
+        devices = data.get("devices", {})
 
-    async def _api_wrapper(self, data: dict) -> dict:
+        if len(devices) > self._limit:
+            self._limit = len(devices)
+            _LOGGER.debug("PubsLimit set to %d", self._limit)
+
+        sensors: NARODMON_IDS = set()
+        for device in sorted(data["devices"], key=lambda x: x["distance"]):
+            for sensor in device["sensors"]:
+                if sensor["type"] in self._nearby_sensor_types:
+                    self._nearby_sensor_types.remove(sensor["type"])
+                    sensors.add(sensor["id"])
+                    if device["id"] not in self._devices:
+                        self._devices[int(device["id"])] = now_ts
+                        self.sensors.update(self._convert2dict(device))
+
+        _LOGGER.debug("New sensors found: %s", ", ".join([f"S{i}" for i in sensors]))
+        if self._nearby_listener:
+            await self._nearby_listener(sensors)
+        self._nearby_listener = None
+
+    async def _async_update_sensors(self) -> None:
+        """Update known sensors."""
+        now_ts = int(time.time())
+
+        data = await self._async_api_wrapper(
+            {
+                "cmd": "sensorsOnDevice",
+                "devices": ",".join([str(i) for i in self._devices4update]),
+            }
+        )
+        self._sensors_last_updated = True
+        devices = data.get("devices", {})
+
+        if len(devices) > self._limit:
+            self._limit = len(devices)
+            _LOGGER.debug("PubsLimit set to %d", self._limit)
+
+        for device in devices:
+            self._devices[int(device["id"])] = now_ts
+            self.sensors.update(self._convert2dict(device))
+
+    async def _async_api_wrapper(
+        self, data: Dict[str, Union[str, int, float]]
+    ) -> Dict[str, Any]:
         """Get information from the API."""
 
-        # Add required arguments
-        data["api_key"] = KHASH
         data["uuid"] = await instance_id.async_get(self.hass)
-        data["lang"] = "en"
 
         _LOGGER.debug("Request: '%s'", data)
+
+        data["api_key"] = KHASH
+        data["lang"] = "en"
+
         try:
             async with async_timeout.timeout(self._timeout):
                 async with self._session.post(

@@ -41,7 +41,7 @@ class NarodmonFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self._errors = {}
 
         for entry in self._async_current_entries():
-            if entry.source == "import":
+            if entry.source == config_entries.SOURCE_IMPORT:
                 return self.async_abort(reason="single_instance_allowed")
 
         if user_input is not None:

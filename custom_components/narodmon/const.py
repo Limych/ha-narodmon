@@ -34,7 +34,7 @@ from homeassistant.const import (
 NAME = "Narodmon.ru Cloud Integration"
 DOMAIN = "narodmon"
 DOMAIN_DATA = f"{DOMAIN}_data"
-VERSION = "2.0.0-alpha"
+VERSION = "2.0.0-beta"
 ATTRIBUTION = "Data provided by http://narodmon.ru/"
 ISSUE_URL = "https://github.com/Limych/ha-narodmon/issues"
 
@@ -50,6 +50,9 @@ DEFAULT_TIMEOUT = 10  # seconds
 ATTR_DISTANCE = "distance"
 ATTR_DEVICE_NAME = "device_name"
 ATTR_SENSOR_NAME = "sensor_name"
+
+
+FRESHNESS_TIME = 20 * 60  # seconds
 
 
 STARTUP_MESSAGE = f"""

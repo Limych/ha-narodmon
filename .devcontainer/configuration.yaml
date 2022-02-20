@@ -9,9 +9,10 @@ logger:
 # debugpy:
 
 narodmon:
-  apikey: "51KUfP4TRQsU9"
   devices:
     - name: "Narodmon"
-      sensors:
-        - temperature
-        - humidity
+#      sensors:
+#        - temperature
+#        - humidity
+      scan_interval:
+        minutes: 1

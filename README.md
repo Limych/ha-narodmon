@@ -19,6 +19,7 @@ _Component to integrate with Narodmon.ru cloud and automatic search for the near
 ## Known Limitations and Issues
 
 - At the moment, configuring the component is only possible through `configuration.yaml`. Support for configuration via Home Assistant UI will be added in the future.
+- The Narodmon service has limits on the amount of data returned per request and on the frequency of sending requests. Therefore, if you configure several sensors, at first some of them may be in the `Unavailable` state. As data is received from the server, all sensors will receive their values.
 
 ## Installation
 
@@ -27,8 +28,8 @@ _Component to integrate with Narodmon.ru cloud and automatic search for the near
 1. Have [HACS][hacs] installed, this will allow you to easily manage and track updates.
 1. Search for "Narodmon".
 1. Click Install below the found integration.
-1. _If you want to configure component via Home Assistant UI..._\
-    in the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Narodmon".
+1. <del>_If you want to configure component via Home Assistant UI..._\
+    in the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Narodmon".</del>
 1. _If you want to configure component via `configuration.yaml`..._\
     follow instructions below, then restart Home Assistant.
 
@@ -40,8 +41,8 @@ _Component to integrate with Narodmon.ru cloud and automatic search for the near
 1. Download file `narodmon.zip` from the [latest release section][releases-latest] in this repository.
 1. Extract _all_ files from this archive you downloaded in the directory (folder) you created.
 6. Restart Home Assistant
-1. _If you want to configure component via Home Assistant UI..._\
-    in the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Narodmon".
+1. <del>_If you want to configure component via Home Assistant UI..._\
+    in the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Narodmon".</del>
 1. _If you want to configure component via `configuration.yaml`..._\
     follow instructions below, then restart Home Assistant.
 
@@ -102,7 +103,9 @@ Each virtual device in a list have the following settings:
   Minimum time interval between updates. Supported formats: `scan_interval: 'HH:MM:SS'`, `scan_interval: 'HH:MM'` and Time period dictionary.
 
 > **_Note_**:\
-> Updates more than once a minute are prohibited by Narodmon.ru and can lead to permanent blocking of your project.
+> Since the service has data update limits, if you configure several sensors, the actual data update period may be proportionally longer than the one specified in this field.
+>
+> Updates more than once a minute are prohibited by Narodmon.ru and can lead to permanent blocking of your account.
 
 **sensors**:\
   _(list) (Optional) (Default value: all listed here sensor types)_\

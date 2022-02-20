@@ -17,6 +17,7 @@ import voluptuous as vol
 from homeassistant.components.sensor import DOMAIN as SENSOR
 from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.const import (
+    ATTR_ID,
     CONF_DEVICES,
     CONF_LATITUDE,
     CONF_LONGITUDE,
@@ -32,7 +33,7 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.storage import STORAGE_DIR
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .api import NarodmonApiClient
+from .api import NARODMON_IDS, NarodmonApiClient
 from .const import (
     CONF_APIKEY,
     DEFAULT_SCAN_INTERVAL,
@@ -85,6 +86,7 @@ async def async_setup(hass: HomeAssistant, config):
     )
 
     # Remove legacy UUID file from the storage dir
+    # Todo: Remove this block in version 3.0;   pylint: disable=fixme
     legacy_uuid_fpath = hass.config.path(STORAGE_DIR, DOMAIN + ".uuid")
     if os.path.exists(legacy_uuid_fpath):  # pragma: no cover
         await hass.async_add_executor_job(os.remove, legacy_uuid_fpath)
@@ -99,7 +101,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
 
-    if entry.source == "import":
+    if entry.source == SOURCE_IMPORT:
         if YAML_DOMAIN not in hass.data:  # pragma: no cover
             await hass.config_entries.async_remove(entry.entry_id)
             raise ConfigEntryNotReady
@@ -169,19 +171,50 @@ class NarodmonDataUpdateCoordinator(DataUpdateCoordinator):
         types: List[str],
     ) -> None:
         """Initialize."""
+        super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=scan_interval)
+
         self.api = client
         self.latitude = latitude
         self.longitude = longitude
         self.types = types
+        self.sensors: NARODMON_IDS = set()
 
-        super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=scan_interval)
+        self._first_run = True
 
     async def _async_update_data(self):
         """Update data via library."""
         try:
-            return await self.api.async_get_nearby_sensors(
-                self.latitude, self.longitude, self.types
-            )
+            sensors = []
+
+            for _ in range(2):
+                data = await self.api.async_update_data(no_throttle=self._first_run)
+
+                if data is None:
+                    raise UpdateFailed()
+
+                tps: NARODMON_IDS = {SENSOR_TYPES[i].get(ATTR_ID) for i in self.types}
+                for sensor in data.values():
+                    if sensor["id"] in self.sensors:
+                        sensors.append(sensor)
+                        tps.remove(sensor["type"])
+
+                if tps:
+
+                    async def async_nearby_listener(new_sensors: NARODMON_IDS) -> None:
+                        self.sensors = self.sensors.union(
+                            new_sensors
+                        )  # pragma: no cover
+
+                    await self.api.async_set_nearby_listener(
+                        async_nearby_listener, self.latitude, self.longitude, tps
+                    )
+
+                if not self._first_run or self.api.devices:
+                    break
+
+            self._first_run = False
+
+            return sensors
 
         except Exception as exception:  # pylint: disable=broad-except
             raise UpdateFailed() from exception
