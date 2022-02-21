@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.CRITICAL)
 
 _LOGGER = logging.getLogger(__name__)
 
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 
 ROOT = os.path.dirname(os.path.abspath(f"{__file__}/.."))
 
@@ -77,8 +77,12 @@ def main():
 
     with open(fpath, encoding="utf8") as fp:
         src = fp.read()
-    metadata = dict(re.findall(r'([a-z_]+) = "([^"]*)"', src, re.IGNORECASE))
-    metadata.update(dict(re.findall(r"([a-z_]+) = '([^']*)'", src, re.IGNORECASE)))
+    metadata = dict(
+        re.findall(r'([a-z_]+)(?::[^\n]+)? = "([^"]*)"', src, re.IGNORECASE)
+    )
+    metadata.update(
+        dict(re.findall(r"([a-z_]+)(?::[^\n]+)? = '([^']*)'", src, re.IGNORECASE))
+    )
 
     khash = "".join(
         chr(a ^ ord(b))
@@ -87,7 +91,7 @@ def main():
     _LOGGER.debug("Encode key: %s => %s", repr(key), repr(khash))
 
     khash = re.sub(r"\\\$", "$", re.sub(r"^'|'$", '"', re.escape(repr(khash))))
-    res = re.sub(r"KHASH = [^\n]+", f"KHASH = {khash}", src)
+    res = re.sub(r"(KHASH: Final = )[^\n]+", f"\\1{khash}", src)
 
     if args.dry_run:
         print(f"Hash would be stored to {fpath}")

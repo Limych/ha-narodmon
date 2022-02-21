@@ -9,6 +9,7 @@ https://github.com/Limych/ha-narodmon/
 """
 import asyncio
 import logging
+import random
 import socket
 import time
 from datetime import timedelta
@@ -112,7 +113,6 @@ class NarodmonApiClient(Generic[T]):
         result = set(
             sorted(self._devices.keys(), key=lambda x: self._devices[x])[: self._limit]
         )
-        _LOGGER.debug("_devices4update(%s): %s", self._devices, result)
         return result
 
     async def async_set_nearby_listener(
@@ -175,7 +175,9 @@ class NarodmonApiClient(Generic[T]):
         """Update data iterator."""
         await self.async_init()
 
-        if (not self.devices or self._sensors_last_updated) and self._nearby_listener:
+        if self._nearby_listener and (
+            not self.devices or self._sensors_last_updated or random.randrange(2)
+        ):
             await self._async_search_nearby_sensors()
 
         elif self.devices:

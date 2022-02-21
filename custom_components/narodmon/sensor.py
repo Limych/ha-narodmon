@@ -27,13 +27,15 @@ from homeassistant.const import (
     CONF_NAME,
     CONF_SENSORS,
 )
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.typing import StateType
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import YAML_DOMAIN
 from .const import (
     ATTR_DEVICE_NAME,
     ATTR_DISTANCE,
+    ATTR_SENSOR_ID,
     ATTR_SENSOR_NAME,
     ATTRIBUTION,
     DOMAIN,
@@ -51,7 +53,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_d
     if entry.source == SOURCE_IMPORT:
         config = hass.data[YAML_DOMAIN]
         for index, device_config in enumerate(config.get(CONF_DEVICES)):
-            device_id = "-".join([entry.entry_id, str(index)])
+            vdev_id = "-".join([entry.entry_id, str(index)])
             coordinator = hass.data[DOMAIN][entry.entry_id][index]
             name = device_config.get(CONF_NAME, hass.config.location_name)
             types = device_config.get(CONF_SENSORS, SENSOR_TYPES.keys())
@@ -63,7 +65,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_d
                     NarodmonSensor(
                         coordinator,
                         stype,
-                        device_id,
+                        vdev_id,
                         entity_name,
                     )
                 )
@@ -79,14 +81,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_d
 class NarodmonSensor(CoordinatorEntity, SensorEntity):
     """Implementation of an NarodMon.ru sensor."""
 
-    def __init__(self, coordinator, sensor_type: str, device_id: str, name: str):
+    def __init__(self, coordinator, sensor_type: str, vdev_id: str, name: str):
         """Class initialization."""
         super().__init__(coordinator)
 
         self._sensor_type_id = SENSOR_TYPES[sensor_type].get(ATTR_ID)
         self._sensor_id = None
 
-        self._attr_unique_id = f"{device_id}-{sensor_type}"
+        self._attr_unique_id = f"{vdev_id}-{sensor_type}"
         self._attr_name = name
         self._attr_icon = SENSOR_TYPES[sensor_type].get(ATTR_ICON)
         self._attr_native_value = None
@@ -95,15 +97,19 @@ class NarodmonSensor(CoordinatorEntity, SensorEntity):
         )
         self._attr_device_class = SENSOR_TYPES[sensor_type].get(ATTR_DEVICE_CLASS)
         self._attr_device_info = {
-            "identifiers": {(DOMAIN, device_id)},
+            "identifiers": {(DOMAIN, vdev_id)},
             "name": NAME,
             "model": VERSION,
         }
 
     def _update_state(self):
         """Update entity state."""
+        fresh = int(time.time() - FRESHNESS_TIME)
         for sensor in self.coordinator.data:
-            if sensor["type"] == self._sensor_type_id:
+            if sensor["type"] == self._sensor_type_id and sensor["time"] >= fresh:
+                if self._attr_native_value == sensor["value"]:
+                    return
+
                 device = sensor["device"]
 
                 self._attr_native_value = sensor["value"]
@@ -114,6 +120,9 @@ class NarodmonSensor(CoordinatorEntity, SensorEntity):
                         ATTR_ATTRIBUTION: ATTRIBUTION,
                     }
 
+                self._attr_extra_state_attributes[ATTR_SENSOR_ID] = "S" + str(
+                    self._sensor_id
+                )
                 self._attr_extra_state_attributes[ATTR_SENSOR_NAME] = sensor["name"]
                 self._attr_extra_state_attributes[ATTR_DEVICE_ID] = "D" + str(
                     device["id"]
@@ -136,8 +145,14 @@ class NarodmonSensor(CoordinatorEntity, SensorEntity):
                 )
                 return
 
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Handle updated data from the coordinator."""
+        self._update_state()
+        super()._handle_coordinator_update()
+
     @property
-    def native_value(self) -> None:
+    def native_value(self) -> StateType:
         """Return the value reported by the sensor."""
         self._update_state()
         return super().native_value
@@ -147,7 +162,7 @@ class NarodmonSensor(CoordinatorEntity, SensorEntity):
         """Return True if entity is available."""
         fresh = int(time.time() - FRESHNESS_TIME)
         for sensor in self.coordinator.data:
-            if sensor["type"] == self._sensor_type_id and sensor["changed"] >= fresh:
+            if sensor["type"] == self._sensor_type_id and sensor["time"] >= fresh:
                 return True
 
         return False

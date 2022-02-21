@@ -11,6 +11,7 @@ import asyncio
 import logging
 import os
 import re
+import time
 from datetime import timedelta
 from typing import Any, Dict, List
 
@@ -41,6 +42,7 @@ from .const import (
     DEFAULT_TIMEOUT,
     DEFAULT_VERIFY_SSL,
     DOMAIN,
+    FRESHNESS_TIME,
     SENSOR_TYPES,
     STARTUP_MESSAGE,
 )
@@ -203,6 +205,7 @@ class NarodmonDataUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self):
         """Update data via library."""
         try:
+            fresh = int(time.time() - FRESHNESS_TIME)
             sensors = []
 
             for _ in range(2):
@@ -213,7 +216,7 @@ class NarodmonDataUpdateCoordinator(DataUpdateCoordinator):
 
                 tps: NARODMON_IDS = {SENSOR_TYPES[i].get(ATTR_ID) for i in self.types}
                 for sensor in data.values():
-                    if sensor["id"] in self.sensors:
+                    if sensor["id"] in self.sensors and sensor["time"] >= fresh:
                         sensors.append(sensor)
                         tps.remove(sensor["type"])
 

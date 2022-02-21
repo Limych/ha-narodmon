@@ -15,4 +15,4 @@ narodmon:
 #        - temperature
 #        - humidity
       scan_interval:
-        minutes: 1
+        seconds: 61

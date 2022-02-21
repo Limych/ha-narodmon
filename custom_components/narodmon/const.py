@@ -8,6 +8,7 @@ For more details about this sensor, please refer to the documentation at
 https://github.com/Limych/ha-narodmon/
 """
 from datetime import timedelta
+from typing import Final
 
 from homeassistant.const import (
     ATTR_DEVICE_CLASS,
@@ -31,33 +32,34 @@ from homeassistant.const import (
 )
 
 # Base component constants
-NAME = "Narodmon.ru Cloud Integration"
-DOMAIN = "narodmon"
-DOMAIN_DATA = f"{DOMAIN}_data"
-VERSION = "2.0.0-beta2"
-ATTRIBUTION = "Data provided by http://narodmon.ru/"
-ISSUE_URL = "https://github.com/Limych/ha-narodmon/issues"
+NAME: Final = "Narodmon.ru Cloud Integration"
+DOMAIN: Final = "narodmon"
+DOMAIN_DATA: Final = f"{DOMAIN}_data"
+VERSION: Final = "2.0.0-beta2"
+ATTRIBUTION: Final = "Data provided by Narodmon.ru"
+ISSUE_URL: Final = "https://github.com/Limych/ha-narodmon/issues"
 
 # Configuration and options
-CONF_APIKEY = "apikey"
+CONF_APIKEY: Final = "apikey"
 
 # Defaults
-DEFAULT_SCAN_INTERVAL = timedelta(minutes=3)
-DEFAULT_VERIFY_SSL = True
-DEFAULT_TIMEOUT = 10  # seconds
+DEFAULT_SCAN_INTERVAL: Final = timedelta(minutes=3)
+DEFAULT_VERIFY_SSL: Final = True
+DEFAULT_TIMEOUT: Final = 10  # seconds
 
 # Attributes
-ATTR_DISTANCE = "distance"
-ATTR_DEVICE_NAME = "device_name"
-ATTR_SENSOR_NAME = "sensor_name"
+ATTR_DISTANCE: Final = "distance"
+ATTR_DEVICE_NAME: Final = "device_name"
+ATTR_SENSOR_ID: Final = "sensor_id"
+ATTR_SENSOR_NAME: Final = "sensor_name"
 
 
-FRESHNESS_TIME = 20 * 60  # seconds
+FRESHNESS_TIME: Final = 20 * 60  # seconds
 
-KHASH = "Ò\x021Ó\x81è\x92Ï7$2Î9"
+KHASH: Final = "Ò\x021Ó\x81è\x92Ï7$2Î9"
 
 
-STARTUP_MESSAGE = f"""
+STARTUP_MESSAGE: Final = f"""
 -------------------------------------------------------------------
 {NAME}
 Version: {VERSION}
@@ -68,10 +70,10 @@ If you have ANY issues with this you need to open an issue here:
 """
 
 
-MICROROENTGEN_PER_HOUR = "µR/h"
+MICROROENTGEN_PER_HOUR: Final = "µR/h"
 
 
-SENSOR_TYPES = {
+SENSOR_TYPES: Final = {
     "temperature": {
         ATTR_ID: 1,
         ATTR_NAME: "Temperature",
