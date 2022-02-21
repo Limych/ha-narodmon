@@ -116,9 +116,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
         config = hass.data[YAML_DOMAIN]
 
+        apikey = config.get(CONF_APIKEY)
+        if apikey is not None:
+            _LOGGER.warning(
+                "Field '%s' is NOT recommended to use. If you don't have your own "
+                "API key with special limits please remove it from your configs.",
+                CONF_APIKEY,
+            )
+
         client = NarodmonApiClient(
             hass,
-            apikey=config.get(CONF_APIKEY),
+            apikey=apikey,
             verify_ssl=config.get(CONF_VERIFY_SSL),
             timeout=config.get(CONF_TIMEOUT),
         )

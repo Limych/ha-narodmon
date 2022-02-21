@@ -1,4 +1,5 @@
 """Tests for Narodmon.ru Cloud Integration component."""
+import logging
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -10,6 +11,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from voluptuous import Invalid
 
 from custom_components.narodmon import (
+    CONF_APIKEY,
     DOMAIN,
     YAML_DOMAIN,
     NarodmonDataUpdateCoordinator,
@@ -47,7 +49,7 @@ async def test_cv_apikey():
             cv_apikey(apikey)
 
 
-async def test_setup(hass: HomeAssistant):
+async def test_setup(hass: HomeAssistant, caplog):
     """Test setup from configuration.yaml."""
     with patch.object(
         NarodmonApiClient,
@@ -55,10 +57,32 @@ async def test_setup(hass: HomeAssistant):
         new_callable=AsyncMock,
     ), patch.object(
         NarodmonApiClient, "async_update_data", new_callable=AsyncMock, return_value={}
+    ), caplog.at_level(
+        logging.WARNING
     ):
         assert await async_setup_component(hass, DOMAIN, MOCK_YAML_CONFIG)
         await hass.async_block_till_done()
         assert len(hass.states.async_all()) == 2
+        assert len(caplog.records) == 1
+
+
+async def test_setup_apikey(hass: HomeAssistant, caplog):
+    """Test setup from configuration.yaml."""
+    with patch.object(
+        NarodmonApiClient,
+        "async_init",
+        new_callable=AsyncMock,
+    ), patch.object(
+        NarodmonApiClient, "async_update_data", new_callable=AsyncMock, return_value={}
+    ), caplog.at_level(
+        logging.WARNING
+    ):
+        cfg = MOCK_YAML_CONFIG
+        cfg[DOMAIN][CONF_APIKEY] = "testapikey"
+        assert await async_setup_component(hass, DOMAIN, MOCK_YAML_CONFIG)
+        await hass.async_block_till_done()
+        assert len(hass.states.async_all()) == 2
+        assert len(caplog.records) == 2
 
 
 # We can pass fixtures as defined in conftest.py to tell pytest to use the fixture
