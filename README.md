@@ -33,7 +33,7 @@ _Component to integrate with Narodmon.ru cloud and automatic search for the near
 1. Search for "Narodmon".
 1. Click Install below the found integration.
 1. <del>_If you want to configure component via Home Assistant UI..._\
-    in the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Narodmon".</del>
+    in the HA UI go to "Configuration" > "Integrations" click "+" and search for "Narodmon".</del>
 1. _If you want to configure component via `configuration.yaml`..._\
     follow instructions below, then restart Home Assistant.
 
@@ -46,7 +46,7 @@ _Component to integrate with Narodmon.ru cloud and automatic search for the near
 1. Extract _all_ files from this archive you downloaded in the directory (folder) you created.
 6. Restart Home Assistant
 1. <del>_If you want to configure component via Home Assistant UI..._\
-    in the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Narodmon".</del>
+    in the HA UI go to "Configuration" > "Integrations" click "+" and search for "Narodmon".</del>
 1. _If you want to configure component via `configuration.yaml`..._\
     follow instructions below, then restart Home Assistant.
 
@@ -81,7 +81,7 @@ I put a lot of work into making this repo and component available and updated to
 > **_Note_**:\
 > This field is no longer required and is not recommended. Fill it out only if you already have your own API key with special limits.
 >
-> To obtain a key, you need to register on [narodmon.ru](https://narodmon.ru/), then open the menu item `Profile`-> `My applications`-> `New key` and create an API key. You can give any name to the key at your discretion.
+> To obtain a key, you need to register on [narodmon.com](https://narodmon.com/), then open the menu item `Profile` > `My applications` > `New key` and create an API key. You can give any name to the key at your discretion.
 
 **devices**:\
   _(list) (**Required**)_\

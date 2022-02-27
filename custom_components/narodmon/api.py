@@ -9,7 +9,6 @@ https://github.com/Limych/ha-narodmon/
 """
 import asyncio
 import logging
-import random
 import socket
 import time
 from datetime import timedelta
@@ -47,7 +46,7 @@ from .const import (
 
 _LOGGER: Final = logging.getLogger(__package__)
 
-ENDPOINT_URL: Final = "https://narodmon.ru/api"
+ENDPOINT_URL: Final = "https://narodmon.com/api"
 HEADERS: Final = {
     "User-Agent": f"ha-narodmon/{VERSION} (https://github.com/Limych/ha-narodmon/)",
     "Content-type": "application/json; charset=UTF-8",
@@ -175,9 +174,7 @@ class NarodmonApiClient(Generic[T]):
         """Update data iterator."""
         await self.async_init()
 
-        if self._nearby_listener and (
-            not self.devices or self._sensors_last_updated or random.randrange(2)
-        ):
+        if self._nearby_listener and (not self.devices or self._sensors_last_updated):
             await self._async_search_nearby_sensors()
 
         elif self.devices:
