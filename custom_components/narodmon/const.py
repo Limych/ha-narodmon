@@ -56,7 +56,7 @@ ATTR_SENSOR_NAME: Final = "sensor_name"
 
 FRESHNESS_TIME: Final = 20 * 60  # seconds
 
-KHASH: Final = "Ò\x021Ó\x81è\x92Ï7$2Î9"
+KHASH: Final = "\x90G2çÒ\x8bÞ¨\x13\x006ª4"
 
 
 STARTUP_MESSAGE: Final = f"""
