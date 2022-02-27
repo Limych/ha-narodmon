@@ -9,6 +9,7 @@ https://github.com/Limych/ha-narodmon/
 """
 import logging
 import time
+from typing import Final
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
@@ -45,7 +46,7 @@ from .const import (
     VERSION,
 )
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER: Final = logging.getLogger(__name__)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_devices):

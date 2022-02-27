@@ -221,10 +221,10 @@ class NarodmonDataUpdateCoordinator(DataUpdateCoordinator):
                         tps.remove(sensor["type"])
 
                 if tps:
-                    # pragma: no cover
+
                     async def async_nearby_listener(
                         new_sensors: Dict[int, int]
-                    ) -> None:
+                    ) -> None:  # pragma: no cover
                         self.devices = self.devices.union(new_sensors.values())
                         self.sensors = self.sensors.union(new_sensors.keys())
 
@@ -233,7 +233,7 @@ class NarodmonDataUpdateCoordinator(DataUpdateCoordinator):
                     )
 
                 if not self._first_run or self.api.devices:
-                    break
+                    break  # pragma: no cover
 
             self._first_run = False
 

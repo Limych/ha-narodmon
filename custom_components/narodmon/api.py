@@ -45,17 +45,17 @@ from .const import (
     VERSION,
 )
 
-_LOGGER: logging.Logger = logging.getLogger(__package__)
+_LOGGER: Final = logging.getLogger(__package__)
 
-ENDPOINT_URL = "https://narodmon.ru/api"
-HEADERS = {
+ENDPOINT_URL: Final = "https://narodmon.ru/api"
+HEADERS: Final = {
     "User-Agent": f"ha-narodmon/{VERSION} (https://github.com/Limych/ha-narodmon/)",
     "Content-type": "application/json; charset=UTF-8",
 }
 
-DATA_VERSION = 1
+DATA_VERSION: Final = 1
 
-DATA_LAST_INIT_TS = "last_init"
+DATA_LAST_INIT_TS: Final = "last_init"
 
 NARODMON_IDS: Final = Set[int]
 NARODMON_NEARBY_LISTENER: Final = Callable[[Dict[int, int]], Awaitable[None]]
