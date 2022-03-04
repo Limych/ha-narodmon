@@ -1,4 +1,4 @@
-"""Tests for Narodmon.ru Cloud Integration component."""
+"""Tests for Narodmon Cloud Integration component."""
 import logging
 from unittest.mock import AsyncMock, patch
 

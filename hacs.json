@@ -1,5 +1,5 @@
 {
-    "name": "Narodmon.ru Cloud Integration",
+    "name": "Narodmon Cloud Integration",
     "hacs": "1.6.0",
     "domains": [
         "binary_sensor",

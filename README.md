@@ -1,6 +1,6 @@
 *Please :star: this repo if you find it useful*
 
-# NarodMon.ru Cloud Integration Component for Home Assistant
+# NarodMon Cloud Integration Component for Home Assistant
 
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
@@ -12,9 +12,9 @@
 
 [![Community Forum][forum-shield]][forum]
 
-_Component to integrate with Narodmon.ru cloud and automatic search for the nearest sensors of the required type._
+_Component to integrate with Narodmon cloud and automatic search for the nearest sensors of the required type._
 
-![NarodMon.ru Logo](narodmon-logo.png)
+![NarodMon Logo](narodmon-logo.png)
 
 ## Known Limitations and Issues
 
@@ -118,7 +118,7 @@ Each virtual device in a list have the following settings:
 > **_Note_**:\
 > Since the service has data update limits, if you configure several sensors, the actual data update period may be proportionally longer than the one specified in this field.
 >
-> Updates more than once a minute are prohibited by Narodmon.ru and can lead to permanent blocking of your account.
+> Updates more than once a minute are prohibited by Narodmon and can lead to permanent blocking of your account.
 
 **sensors**:\
   _(list) (Optional) (Default value: all listed here sensor types)_\

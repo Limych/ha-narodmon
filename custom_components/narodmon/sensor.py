@@ -2,7 +2,7 @@
 #  Creative Commons BY-NC-SA 4.0 International Public License
 #  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
 """
-The NarodMon.ru Cloud Integration Component.
+The NarodMon Cloud Integration Component.
 
 For more details about this sensor, please refer to the documentation at
 https://github.com/Limych/ha-narodmon/
@@ -80,7 +80,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_d
 
 # pylint: disable=too-many-instance-attributes
 class NarodmonSensor(CoordinatorEntity, SensorEntity):
-    """Implementation of an NarodMon.ru sensor."""
+    """Implementation of an NarodMon sensor."""
 
     def __init__(self, coordinator, sensor_type: str, vdev_id: str, name: str):
         """Class initialization."""

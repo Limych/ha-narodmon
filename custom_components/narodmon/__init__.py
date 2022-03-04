@@ -2,7 +2,7 @@
 #  Creative Commons BY-NC-SA 4.0 International Public License
 #  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
 """
-The NarodMon.ru Cloud Integration Component.
+The NarodMon Cloud Integration Component.
 
 For more details about this sensor, please refer to the documentation at
 https://github.com/Limych/ha-narodmon/
@@ -51,7 +51,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 def cv_apikey(value: Any) -> str:
-    """Validate and coerce a NarodMon.ru API key value."""
+    """Validate and coerce a NarodMon API key value."""
     if isinstance(value, str) and re.match("^[0-9a-z]+$", value, re.IGNORECASE):
         return value
     raise vol.Invalid(f"Invalid API Key {value}")
@@ -179,7 +179,7 @@ async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
 
 class NarodmonDataUpdateCoordinator(DataUpdateCoordinator):
-    """Class to manage fetching data from the Narodmon.ru Cloud."""
+    """Class to manage fetching data from the Narodmon Cloud."""
 
     def __init__(
         self,

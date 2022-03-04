@@ -1,4 +1,4 @@
-"""Tests for Narodmon.ru API."""
+"""Tests for Narodmon API."""
 import asyncio
 import os
 import time

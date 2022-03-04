@@ -2,7 +2,7 @@
 #  Creative Commons BY-NC-SA 4.0 International Public License
 #  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
 """
-The NarodMon.ru Cloud Integration Component.
+The NarodMon Cloud Integration Component.
 
 For more details about this sensor, please refer to the documentation at
 https://github.com/Limych/ha-narodmon/
@@ -63,7 +63,7 @@ NARODMON_SENSORS_DICT: Final = Dict[int, Dict[str, Any]]
 
 
 class ApiError(Exception):
-    """Raised when Narodmon.ru API request ended in error."""
+    """Raised when Narodmon API request ended in error."""
 
     def __init__(self, status: str, errno: Optional[int] = None):
         """Initialize."""
@@ -73,7 +73,7 @@ class ApiError(Exception):
 
 
 class NarodmonApiClient(Generic[T]):
-    """Narodmon.ru API client class."""
+    """Narodmon API client class."""
 
     def __init__(
         self,

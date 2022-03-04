@@ -2,7 +2,7 @@
 #  Creative Commons BY-NC-SA 4.0 International Public License
 #  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
 """
-The NarodMon.ru Cloud Integration Component.
+The Narodmon Cloud Integration Component.
 
 For more details about this sensor, please refer to the documentation at
 https://github.com/Limych/ha-narodmon/
@@ -32,11 +32,11 @@ from homeassistant.const import (
 )
 
 # Base component constants
-NAME: Final = "Narodmon.ru Cloud Integration"
+NAME: Final = "Narodmon Cloud Integration"
 DOMAIN: Final = "narodmon"
 DOMAIN_DATA: Final = f"{DOMAIN}_data"
 VERSION: Final = "2.0.1-alpha"
-ATTRIBUTION: Final = "Data provided by Narodmon.ru"
+ATTRIBUTION: Final = "Data provided by Narodmon Cloud"
 ISSUE_URL: Final = "https://github.com/Limych/ha-narodmon/issues"
 
 # Configuration and options

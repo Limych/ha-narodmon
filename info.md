@@ -12,9 +12,9 @@
 
 [![Community Forum][forum-shield]][forum]
 
-_Component to integrate with Narodmon.ru cloud and automatic search for the nearest sensors of the required type._
+_Component to integrate with Narodmon cloud and automatic search for the nearest sensors of the required type._
 
-![NarodMon.ru Logo](narodmon-logo.png)
+![Narodmon Logo](narodmon-logo.png)
 
 ## Known Limitations and Issues
 
