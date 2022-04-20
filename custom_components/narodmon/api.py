@@ -23,6 +23,7 @@ from typing import (
     List,
     Optional,
     Set,
+    TypeVar,
     Union,
 )
 
@@ -32,7 +33,6 @@ from homeassistant.const import __short_version__ as HASS_VERSION
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import instance_id, storage
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.helpers.update_coordinator import T
 from homeassistant.util import Throttle
 
 from .const import (
@@ -45,6 +45,8 @@ from .const import (
 )
 
 _LOGGER: Final = logging.getLogger(__package__)
+
+T = TypeVar("T")
 
 ENDPOINT_URL: Final = "https://narodmon.com/api"
 HEADERS: Final = {
