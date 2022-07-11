@@ -5,7 +5,7 @@ repos:
         name: Update manifest.json
         entry: bin/update_manifest
         language: script
-        files: ^custom_components/.+/const\.py$
+        files: ^(custom_components/.+/const\.py|requirements\.txt)$
       - id: calc_hash
         name: Calculate hash
         entry: bin/calc_hash.py
