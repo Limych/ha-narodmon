@@ -3,10 +3,6 @@ import logging
 from unittest.mock import AsyncMock, patch
 
 import pytest
-from homeassistant import config_entries
-from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from voluptuous import Invalid
 
@@ -21,6 +17,10 @@ from custom_components.narodmon import (
     cv_apikey,
 )
 from custom_components.narodmon.api import NarodmonApiClient
+from homeassistant import config_entries
+from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.setup import async_setup_component
 
 from .const import MOCK_YAML_CONFIG
 

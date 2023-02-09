@@ -5,10 +5,9 @@ import time
 from unittest.mock import AsyncMock, patch
 
 import aiohttp
-import yaml
-from homeassistant.core import HomeAssistant
 from pytest import raises
 from pytest_homeassistant_custom_component.common import load_fixture
+import yaml
 
 from custom_components.narodmon.api import (
     DATA_LAST_INIT_TS,
@@ -18,6 +17,7 @@ from custom_components.narodmon.api import (
     NarodmonApiClient,
 )
 from custom_components.narodmon.const import DEFAULT_TIMEOUT, DEFAULT_VERIFY_SSL
+from homeassistant.core import HomeAssistant
 
 ROOT = os.path.dirname(os.path.abspath(f"{__file__}/.."))
 
@@ -258,14 +258,14 @@ async def test_async_init(hass: HomeAssistant):
 # pylint: disable=protected-access
 async def test_async_get_nearby_sensors(hass: HomeAssistant):
     """Test getting nearby sensors."""
-    now_ts = int(time.time())
-
     # To test the api submodule, we first create an instance of our API client
     api = NarodmonApiClient(hass, DEFAULT_VERIFY_SSL, DEFAULT_TIMEOUT)
 
     assert api.devices == set()
     assert api._sensors_last_updated is False
     assert api._limit == 1
+
+    now_ts = int(time.time())
 
     with patch.object(
         api,
@@ -292,14 +292,14 @@ async def test_async_get_nearby_sensors(hass: HomeAssistant):
 # pylint: disable=protected-access
 async def test_async_get_sensors_on_device(hass: HomeAssistant):
     """Test getting sensors on device."""
-    now_ts = int(time.time())
-
     # To test the api submodule, we first create an instance of our API client
     api = NarodmonApiClient(hass, DEFAULT_VERIFY_SSL, DEFAULT_TIMEOUT)
 
     assert api.devices == set()
     assert api._sensors_last_updated is False
     assert api._limit == 1
+
+    now_ts = int(time.time())
 
     with patch.object(
         api,
