@@ -62,14 +62,12 @@ def main():
 
     if args.dry_run:
         _LOGGER.debug("Dry run mode ENABLED")
-        print("!!! Dry Run !!!")
 
     secrets_file = f"{ROOT}/secrets.yaml"
     with open(secrets_file, encoding="utf8") as fp:
         key = (yaml.safe_load(fp) or {}).get("api_key")
 
     if key is None:
-        print(f"Key is not defined. Please add key field to {secrets_file}")
         sys.exit(1)
 
     pkg_dir = f"{ROOT}/custom_components/narodmon"
@@ -94,7 +92,7 @@ def main():
     res = re.sub(r"(KHASH: Final = )[^\n]+", f"\\1{khash}", src)
 
     if args.dry_run:
-        print(f"Hash would be stored to {fpath}")
+        pass
     else:
         _LOGGER.debug("Storing hash to %s", fpath)
         with open(fpath, "w", encoding="utf8") as fp:

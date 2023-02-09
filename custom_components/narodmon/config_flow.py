@@ -1,13 +1,13 @@
 #  Copyright (c) 2021-2022, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
 #  Creative Commons BY-NC-SA 4.0 International Public License
 #  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
-"""
-The narodmon Cloud Integration Component.
+"""The narodmon Cloud Integration Component.
 
 For more details about this sensor, please refer to the documentation at
 https://github.com/Limych/ha-narodmon/
 """
 import voluptuous as vol
+
 from homeassistant import config_entries
 from homeassistant.const import CONF_TIMEOUT, CONF_VERIFY_SSL
 

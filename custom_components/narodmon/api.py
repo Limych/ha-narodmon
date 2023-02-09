@@ -1,34 +1,23 @@
 #  Copyright (c) 2021-2022, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
 #  Creative Commons BY-NC-SA 4.0 International Public License
 #  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
-"""
-The NarodMon Cloud Integration Component.
+"""The NarodMon Cloud Integration Component.
 
 For more details about this sensor, please refer to the documentation at
 https://github.com/Limych/ha-narodmon/
 """
 import asyncio
+from collections.abc import Awaitable, Callable
+from datetime import timedelta
+from http import HTTPStatus
 import logging
 import socket
 import time
-from datetime import timedelta
-from http import HTTPStatus
-from typing import (
-    Any,
-    Awaitable,
-    Callable,
-    Dict,
-    Final,
-    Generic,
-    List,
-    Optional,
-    Set,
-    TypeVar,
-    Union,
-)
+from typing import Any, Dict, Final, Generic, List, Optional, Set, TypeVar, Union
 
 import aiohttp
 import async_timeout
+
 from homeassistant.const import __short_version__ as HASS_VERSION
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import instance_id, storage

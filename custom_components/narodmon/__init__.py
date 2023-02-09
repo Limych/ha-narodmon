@@ -1,21 +1,21 @@
 #  Copyright (c) 2021-2022, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
 #  Creative Commons BY-NC-SA 4.0 International Public License
 #  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
-"""
-The NarodMon Cloud Integration Component.
+"""The NarodMon Cloud Integration Component.
 
 For more details about this sensor, please refer to the documentation at
 https://github.com/Limych/ha-narodmon/
 """
 import asyncio
+from datetime import timedelta
 import logging
 import os
 import re
 import time
-from datetime import timedelta
 from typing import Any, Dict, List
 
 import voluptuous as vol
+
 from homeassistant.components.sensor import DOMAIN as SENSOR
 from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
 from homeassistant.const import (
