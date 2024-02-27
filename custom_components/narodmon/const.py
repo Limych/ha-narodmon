@@ -1,4 +1,4 @@
-#  Copyright (c) 2021-2022, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
+#  Copyright (c) 2021-2024, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
 #  Creative Commons BY-NC-SA 4.0 International Public License
 #  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
 """The Narodmon Cloud Integration Component.
@@ -9,6 +9,7 @@ https://github.com/Limych/ha-narodmon/
 from datetime import timedelta
 from typing import Final
 
+from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import (
     ATTR_DEVICE_CLASS,
     ATTR_ICON,
@@ -17,17 +18,13 @@ from homeassistant.const import (
     ATTR_UNIT_OF_MEASUREMENT,
     CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
     DEGREE,
-    DEVICE_CLASS_HUMIDITY,
-    DEVICE_CLASS_ILLUMINANCE,
-    DEVICE_CLASS_PRESSURE,
-    DEVICE_CLASS_TEMPERATURE,
-    LENGTH_MILLIMETERS,
     LIGHT_LUX,
     PERCENTAGE,
-    PRESSURE_MMHG,
-    SPEED_METERS_PER_SECOND,
-    TEMP_CELSIUS,
     UV_INDEX,
+    UnitOfLength,
+    UnitOfPressure,
+    UnitOfSpeed,
+    UnitOfTemperature,
 )
 
 # Base component constants
@@ -76,28 +73,28 @@ SENSOR_TYPES: Final = {
     "temperature": {
         ATTR_ID: 1,
         ATTR_NAME: "Temperature",
-        ATTR_UNIT_OF_MEASUREMENT: TEMP_CELSIUS,
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
+        ATTR_UNIT_OF_MEASUREMENT: UnitOfTemperature.CELSIUS,
+        ATTR_DEVICE_CLASS: SensorDeviceClass.TEMPERATURE,
         ATTR_ICON: None,
     },
     "humidity": {
         ATTR_ID: 2,
         ATTR_NAME: "Humidity",
         ATTR_UNIT_OF_MEASUREMENT: PERCENTAGE,
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_HUMIDITY,
+        ATTR_DEVICE_CLASS: SensorDeviceClass.HUMIDITY,
         ATTR_ICON: None,
     },
     "pressure": {
         ATTR_ID: 3,
         ATTR_NAME: "Pressure",
-        ATTR_UNIT_OF_MEASUREMENT: PRESSURE_MMHG,
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_PRESSURE,
+        ATTR_UNIT_OF_MEASUREMENT: UnitOfPressure.MMHG,
+        ATTR_DEVICE_CLASS: SensorDeviceClass.PRESSURE,
         ATTR_ICON: None,
     },
     "wind_speed": {
         ATTR_ID: 4,
         ATTR_NAME: "Wind speed",
-        ATTR_UNIT_OF_MEASUREMENT: SPEED_METERS_PER_SECOND,
+        ATTR_UNIT_OF_MEASUREMENT: UnitOfSpeed.METERS_PER_SECOND,
         ATTR_DEVICE_CLASS: None,
         ATTR_ICON: "mdi:weather-windy",
     },
@@ -111,7 +108,7 @@ SENSOR_TYPES: Final = {
     "precipitation": {
         ATTR_ID: 9,
         ATTR_NAME: "Precipitation",
-        ATTR_UNIT_OF_MEASUREMENT: LENGTH_MILLIMETERS,
+        ATTR_UNIT_OF_MEASUREMENT: UnitOfLength.MILLIMETERS,
         ATTR_DEVICE_CLASS: None,
         ATTR_ICON: "mdi:weather-pouring",
     },
@@ -119,7 +116,7 @@ SENSOR_TYPES: Final = {
         ATTR_ID: 11,
         ATTR_NAME: "Illuminance",
         ATTR_UNIT_OF_MEASUREMENT: LIGHT_LUX,
-        ATTR_DEVICE_CLASS: DEVICE_CLASS_ILLUMINANCE,
+        ATTR_DEVICE_CLASS: SensorDeviceClass.ILLUMINANCE,
         ATTR_ICON: None,
     },
     "radiation": {
