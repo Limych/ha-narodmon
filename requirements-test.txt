@@ -2,7 +2,7 @@
 async-timeout
 asynctest~=0.13
 colorlog~=6.8
-mypy~=1.12
+mypy~=1.14
 pytest>=7.2
 pytest-cov>=3.0
 pytest-homeassistant-custom-component>=0.13
