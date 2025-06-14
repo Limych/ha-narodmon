@@ -8,6 +8,8 @@ For more details about this sensor, please refer to the documentation at
 https://github.com/Limych/ha-narodmon/
 """
 
+from copy import deepcopy
+
 import voluptuous as vol
 from homeassistant.config_entries import (
     CONN_CLASS_CLOUD_POLL,
@@ -104,8 +106,7 @@ class NarodmonOptionsFlowHandler(OptionsFlow):
 
     def __init__(self, config_entry: ConfigEntry) -> None:
         """Initialize HACS options flow."""
-        self._config_entry = config_entry
-        self._options = dict(config_entry.options)
+        self._options = deepcopy(dict(config_entry.options))
 
     async def async_step_init(
         self,
