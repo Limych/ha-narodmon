@@ -98,7 +98,7 @@ jobs:
 
       - name: "Install Coveralls"
         run: |
-          pip install pytest-xdist coveralls
+          pip install --upgrade pytest-xdist coveralls
 
       - name: "Run tests with pytest & Calculate coverage"
         run: |
