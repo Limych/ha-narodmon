@@ -1,5 +1,9 @@
 """Tests for Narodmon API."""
 
+#  Copyright (c) 2025, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
+#  Creative Commons BY-NC-SA 4.0 International Public License
+#  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
 import asyncio
 import time
 from http import HTTPStatus
@@ -18,6 +22,7 @@ from custom_components.narodmon.api import (
     NARODMON_IDS,
     NarodmonApiClient,
     NarodmonApiError,
+    NarodmonUnauthorizedError,
 )
 from custom_components.narodmon.const import DEFAULT_TIMEOUT, DEFAULT_VERIFY_SSL
 
@@ -433,7 +438,7 @@ async def test__async_api_wrapper(hass: HomeAssistant, aioclient_mock):
     aioclient_mock.post(ENDPOINT_URL, text=load_fixture("error_401.json"))
     with (
         patch.object(api, "_async_reset_init", new_callable=AsyncMock) as reset_init,
-        pytest.raises(NarodmonApiError) as exception,
+        pytest.raises(NarodmonUnauthorizedError) as exception,
     ):
         await api._async_api_wrapper({})
 

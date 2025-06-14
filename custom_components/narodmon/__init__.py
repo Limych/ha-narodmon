@@ -1,4 +1,4 @@
-#  Copyright (c) 2021-2024, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
+#  Copyright (c) 2021-2025, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
 #  Creative Commons BY-NC-SA 4.0 International Public License
 #  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
 """
@@ -38,7 +38,7 @@ from homeassistant.helpers.storage import STORAGE_DIR
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .api import NARODMON_IDS, NarodmonApiClient
+from .api import NARODMON_IDS, NarodmonApiClient, NarodmonUnauthorizedError
 from .const import (
     CONF_APIKEY,
     CONF_SEARCH_AREA_RADIUS,
@@ -209,7 +209,11 @@ class NarodmonDataUpdateCoordinator(DataUpdateCoordinator):
         sensors = []
 
         for _ in range(2):
-            data = await self.api.async_update_data(no_throttle=self._first_run)
+            try:
+                data = await self.api.async_update_data(no_throttle=self._first_run)
+            except NarodmonUnauthorizedError:
+                _LOGGER.warning("Request failed: Need reauthorization.")
+                continue
 
             if data is None:
                 raise UpdateFailed

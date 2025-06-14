@@ -1,4 +1,4 @@
-#  Copyright (c) 2021-2024, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
+#  Copyright (c) 2021-2025, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
 #  Creative Commons BY-NC-SA 4.0 International Public License
 #  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
 """
@@ -62,6 +62,10 @@ class NarodmonApiError(Exception):
         super().__init__(status)
         self.errno = errno
         self.status = status
+
+
+class NarodmonUnauthorizedError(NarodmonApiError):
+    """Raised when Narodmon API request is unauthorized."""
 
 
 class NarodmonApiClient(Generic[T]):
@@ -310,6 +314,9 @@ class NarodmonApiClient(Generic[T]):
             if "error" in result:
                 if result["errno"] == HTTPStatus.UNAUTHORIZED:
                     await self._async_reset_init()
+                    raise NarodmonUnauthorizedError(
+                        result["error"], errno=result["errno"]
+                    )
                 raise NarodmonApiError(result["error"], errno=result["errno"])
 
             return result
