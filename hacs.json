@@ -1,5 +1,5 @@
 {
     "name": "Narodmon Cloud Integration",
-    "homeassistant": "2025.2.0",
+    "homeassistant": "2025.2.4",
     "hacs": "2.0.1"
 }
