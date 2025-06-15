@@ -222,7 +222,7 @@ class NarodmonDataUpdateCoordinator(DataUpdateCoordinator):
             for sensor in data.values():
                 if sensor["id"] in self.sensors and sensor["time"] >= fresh:
                     sensors.append(sensor)
-                    tps.remove(sensor["type"])
+                    tps.discard(sensor["type"])
 
             if tps:
 
