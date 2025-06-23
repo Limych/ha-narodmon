@@ -113,7 +113,7 @@ class NarodmonOptionsFlowHandler(OptionsFlow):
         user_input: ConfigType = None,  # noqa: ARG002
     ) -> ConfigFlowResult:  # pylint: disable=unused-argument
         """Manage the options."""
-        if self._config_entry.source == SOURCE_IMPORT:
+        if self.config_entry.source == SOURCE_IMPORT:
             return self.async_abort(reason="no_options_available")
 
         return await self.async_step_user()

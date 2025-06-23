@@ -1,4 +1,4 @@
-#  Copyright (c) 2021-2024, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
+#  Copyright (c) 2021-2025, Andrey "Limych" Khrolenok <andrey@khrolenok.ru>
 #  Creative Commons BY-NC-SA 4.0 International Public License
 #  (see LICENSE.md or https://creativecommons.org/licenses/by-nc-sa/4.0/)
 """
@@ -33,7 +33,7 @@ from homeassistant.const import (
 NAME: Final = "Narodmon Cloud Integration"
 DOMAIN: Final = "narodmon"
 DOMAIN_DATA: Final = f"{DOMAIN}_data"
-VERSION: Final = "2.2.2"
+VERSION: Final = "2.2.3-alpha"
 ATTRIBUTION: Final = "Data provided by Narodmon Cloud"
 ISSUE_URL: Final = "https://github.com/Limych/ha-narodmon/issues"
 
