@@ -1,4 +1,4 @@
 -r requirements-test.txt
 packaging~=25.0
 pre-commit~=4.2
-PyGithub~=2.6
+PyGithub~=2.7
