@@ -54,7 +54,7 @@ jobs:
 
       - name: "Set up Python"
         if: env.release_version != '' && success()
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version-file: 'pyproject.toml'
 
