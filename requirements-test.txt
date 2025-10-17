@@ -1,7 +1,7 @@
 -r requirements.txt
 async-timeout
 asynctest~=0.13
-colorlog~=6.9
+colorlog~=6.10
 mypy~=1.16
 pytest>=7.2
 pytest-cov>=6.0
